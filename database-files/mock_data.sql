@@ -50,6 +50,52 @@ INSERT IGNORE INTO milestones
 VALUES
 (1, 1);
 
+-- DATA FOR EMMA SMITH/PERSONA 1 (VALORANT)
+-- ===================================
+-- Mock Data Inserts for Emma Smith User Stories
+-- ===================================
+
+INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
+('EmmaSmith', 0, 1, 0, 'password');
+
+INSERT IGNORE INTO gamesProfiles ( gameID, profileID, gameUsername, showOnDashboard) VALUES
+(1, 2, 'EmmaSmith', 1);
+
+INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
+VALUES
+(1, 1, '2025-08-21 16:45:00','Unrated', 'Silver 2');
+
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt,firstBloods)
+VALUES
+(2, 2, 14, 23, 7, 2, 343, 94, 2100, 16, 0, 9340, 1); 
+
+INSERT INTO playerStats
+(gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins)
+VALUES
+(2, 45, 63, 25, 25330, 34, 132, 7);
+
+INSERT IGNORE INTO weaponStats
+(statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought)
+VALUES
+(2, 1, 2.000, 131, 0.310, 81),
+(2, 2, 1.000,  42, 0.430,  32);
+
+INSERT IGNORE INTO mapStats
+(statTableID, gameID, weaponType, name)
+VALUES
+(1, 1, 'Rifle',  'Ascent'),
+(1, 1, 'Sniper', 'Bind');
+
+INSERT IGNORE INTO goals
+(gameID, dateCreated, dateAchieved, description)
+VALUES
+(1, NOW(), NULL, 'Reach 1000 kills');
+
+INSERT IGNORE INTO milestones
+(profileID, goalID)
+VALUES
+(2, 2);
+
 
 -- DATA FOR MATTHEW BONES/PERSONA 2 (VALORANT)
 -- ===================================
