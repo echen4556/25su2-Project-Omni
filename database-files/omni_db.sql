@@ -6,7 +6,7 @@ USE `OmniDatabase`;
 DROP TABLE IF EXISTS `games`;
 CREATE TABLE `games` (
    gameID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-   name VARCHAR(50) NOT NULL,
+   name VARCHAR(50) NOT NULL
 );
 
 
