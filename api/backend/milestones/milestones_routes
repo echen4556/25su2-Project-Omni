@@ -23,7 +23,6 @@ def create_milestone(profileID):
     milestone_name = milestone_info.get('milestoneName')
     description = milestone_info.get('description')
     due_date = milestone_info.get('dueDate', None)
-
     query = '''INSERT INTO milestones (profileID, milestoneName, description, dueDate)
                VALUES (%s, %s, %s, %s)'''
     cursor = db.get_db().cursor()
@@ -52,7 +51,6 @@ def update_milestone(profileID, milestoneID):
     milestone_name = milestone_info.get('milestoneName')
     description = milestone_info.get('description')
     due_date = milestone_info.get('dueDate')
-
     query = '''UPDATE milestones
                SET milestoneName = %s, description = %s, dueDate = %s
                WHERE profileID = %s AND milestoneID = %s'''
