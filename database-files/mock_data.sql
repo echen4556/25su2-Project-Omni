@@ -167,19 +167,23 @@ INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists,
 -- ===================================
 
 -- GAMES (adding CSGO)
-INSERT INTO games (name) VALUES
+INSERT INTO games (name) 
+VALUES
 ('CSGO');
 
 -- GAME PROFILES for CSGO (gameID = 2)
-INSERT INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) VALUES
-(2, 1, 'MattBonesCS', TRUE),
-(2, 2, 'JamppiCS', TRUE),
-(2, 3, 'NiveraCS', TRUE),
-(2, 4, 'SoulcasCS', TRUE),
-(2, 5, 'ScreaMCS', TRUE);
+INSERT INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) 
+VALUES
+(2, 1, 'MattBones', TRUE),
+(2, 2, 'Jamppi', TRUE),
+(2, 3, 'Nivera', TRUE),
+(2, 4, 'Soulcas', TRUE),
+(2, 5, 'ScreaM', TRUE);
 
 -- PLAYER STATS for CSGO
-INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins) VALUES
+INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, 
+totalHeadshots, totalShotsHit, totalWins) 
+VALUES
 (8, 210, 160, 50, 42000, 95, 610, 14),  -- MatthewBonesCS
 (9, 280, 150, 65, 50000, 140, 750, 17), -- JamppiCS
 (10, 240, 170, 58, 46000, 115, 680, 15),-- NiveraCS
@@ -187,7 +191,8 @@ INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, to
 (12, 320, 140, 55, 54000, 160, 800, 18);-- ScreaMCS
 
 -- WEAPONS for CSGO (gameID = 2)
-INSERT INTO weapons (gameID, weaponType, name) VALUES
+INSERT INTO weapons (gameID, weaponType, name) 
+VALUES
 (2, 'Rifle', 'AK-47'),
 (2, 'Rifle', 'M4A4'),
 (2, 'Sniper', 'AWP'),
@@ -196,7 +201,8 @@ INSERT INTO weapons (gameID, weaponType, name) VALUES
 (2, 'Shotgun', 'Nova');
 
 -- WEAPON STATS for CSGO
-INSERT INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought) VALUES
+INSERT INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought) 
+VALUES
 -- MatthewBonesCS
 (8, 7, 14.0, 110, 0.26, 55), -- AK-47
 (8, 8, 9.0, 70, 0.25, 40),  -- M4A4
@@ -216,20 +222,24 @@ INSERT INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy,
 (12, 9, 8.0, 78, 0.32, 38);   -- AWP
 
 -- MAPS for CSGO
-INSERT INTO map (gameID, POIs, Name) VALUES
+INSERT INTO map (gameID, POIs, Name) 
+VALUES
 (2, 'A Site, B Site, Mid', 'Dust II'),
 (2, 'A Site, B Site, Palace', 'Mirage'),
 (2, 'A Site, B Site, Apartments', 'Inferno');
 
 -- MATCHES for CSGO
-INSERT INTO matches (gameID, mapID, matchDate, matchType, lobbyRank) VALUES
+INSERT INTO matches (gameID, mapID, matchDate, matchType, lobbyRank) 
+VALUES
 (2, 4, '2025-08-05 20:00:00', 'Ranked', 'Global Elite'),
 (2, 5, '2025-08-06 21:00:00', 'Ranked', 'Global Elite'),
 (2, 6, '2025-08-07 19:00:00', 'Ranked', 'Global Elite');
 
 -- MATCH STATS for CSGO
 -- Match 1 (Dust II)
-INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, 
+Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
+VALUES
 (4, 8, 23, 16, 6, 11, 80, 54, 38, 30, TRUE, 4200, 3), -- MatthewBonesCS
 (4, 9, 28, 14, 8, 15, 88, 60, 38, 30, TRUE, 4700, 4), -- JamppiCS
 (4, 10, 20, 18, 7, 10, 78, 52, 38, 30, FALSE, 4000, 3),-- NiveraCS
@@ -237,7 +247,9 @@ INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headsho
 (4, 12, 30, 12, 4, 17, 92, 65, 38, 30, TRUE, 5200, 5); -- ScreaMCS
 
 -- Match 2 (Mirage)
-INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, 
+TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
+VALUES
 (5, 8, 25, 15, 6, 12, 82, 56, 36, 30, TRUE, 4300, 3),
 (5, 9, 26, 14, 9, 14, 85, 58, 36, 30, TRUE, 4500, 4),
 (5, 10, 22, 17, 5, 11, 80, 54, 36, 30, FALSE, 4100, 3),
@@ -245,7 +257,9 @@ INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headsho
 (5, 12, 32, 11, 3, 18, 95, 68, 36, 30, TRUE, 5400, 5);
 
 -- Match 3 (Inferno)
-INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, 
+Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
+VALUES
 (6, 8, 19, 17, 7, 9, 75, 50, 37, 30, FALSE, 3800, 2),
 (6, 9, 24, 13, 10, 13, 83, 57, 37, 30, TRUE, 4400, 4),
 (6, 10, 21, 16, 6, 10, 79, 53, 37, 30, FALSE, 3950, 3),
