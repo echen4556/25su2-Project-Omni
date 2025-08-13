@@ -10,7 +10,7 @@ weapons = Blueprint('weapons', __name__)
 def get_weapons_by_game(gameID):
     current_app.logger.info(f'GET /weapons/{gameID} route')
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT weapon_id, name FROM weapons WHERE game_id = %s', (gameID,))
+    cursor.execute('SELECT weaponID, name FROM weapons WHERE gameID = %s', (gameID,))
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
@@ -21,7 +21,7 @@ def get_weapons_by_game(gameID):
 def get_weapon(gameID, weaponID):
     current_app.logger.info(f'GET /weapons/{gameID}/{weaponID} route')
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT weapon_id, name, type FROM weapons WHERE game_id = %s AND weapon_id = %s', (gameID, weaponID))
+    cursor.execute('SELECT weaponID, name, type FROM weapons WHERE gameID = %s AND weaponID = %s', (gameID, weaponID))
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
@@ -35,7 +35,7 @@ def create_weapon(gameID, weaponID):
     weapon_info = request.json
     name = weapon_info['name']
     w_type = weapon_info['type']
-    query = 'INSERT INTO weapons (weapon_id, game_id, name, type) VALUES (%s, %s, %s, %s)'
+    query = 'INSERT INTO weapons (weaponID, gameID, name, type) VALUES (%s, %s, %s, %s)'
     data = (weaponID, gameID, name, w_type)
     cursor = db.get_db().cursor()
     cursor.execute(query, data)
@@ -50,7 +50,7 @@ def update_weapon(gameID, weaponID):
     weapon_info = request.json
     name = weapon_info.get('name')
     w_type = weapon_info.get('type')
-    query = 'UPDATE weapons SET name = %s, type = %s WHERE game_id = %s AND weapon_id = %s'
+    query = 'UPDATE weapons SET name = %s, type = %s WHERE gameID = %s AND weaponID = %s'
     data = (name, w_type, gameID, weaponID)
     cursor = db.get_db().cursor()
     cursor.execute(query, data)
@@ -62,7 +62,7 @@ def update_weapon(gameID, weaponID):
 @weapons.route('/weapons/<gameID>/<weaponID>', methods=['DELETE'])
 def delete_weapon(gameID, weaponID):
     current_app.logger.info(f'DELETE /weapons/{gameID}/{weaponID} route')
-    query = 'DELETE FROM weapons WHERE game_id = %s AND weapon_id = %s'
+    query = 'DELETE FROM weapons WHERE gameID = %s AND weaponID = %s'
     data = (gameID, weaponID)
     cursor = db.get_db().cursor()
     cursor.execute(query, data)
