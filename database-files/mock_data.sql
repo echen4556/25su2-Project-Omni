@@ -395,3 +395,101 @@ INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, 
 (9, 16, 21, 16, 6, 10, 79, 53, 37, 24, FALSE, 3950, 3),
 (9, 17, 16, 21, 9,  7, 68, 44, 37, 24, FALSE, 3500, 1),
 (9, 18, 28, 12, 4, 15, 90, 62, 37, 24, TRUE,  5000, 4);
+
+-- CS2
+
+-- ===================================
+-- Mock Data Inserts for CS2 (First 5 Players)
+-- ===================================
+
+INSERT IGNORE INTO games (gameID, name) VALUES
+(3, 'CS2');
+
+-- PROFILES (new CS2 players)  -- expected profileIDs: 15..19
+INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
+('s1mpleCS2', FALSE, TRUE, TRUE, 'pass123'),
+('ZywOoCS2',  FALSE, TRUE, TRUE, 'pass123'),
+('NiKoCS2',   FALSE, TRUE, TRUE, 'pass123'),
+('m0NESY',    FALSE, TRUE, TRUE, 'pass123'),
+('ropzCS2',   FALSE, TRUE, TRUE, 'pass123');
+
+-- BRIDGE: gamesProfiles (profile <-> CS2)  -- expected gameInstanceIDs: 19..23
+INSERT IGNORE INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) VALUES
+(3, 15, 's1mple', TRUE),
+(3, 16, 'ZywOo',  TRUE),
+(3, 17, 'NiKo',   TRUE),
+(3, 18, 'm0NESY', TRUE),
+(3, 19, 'ropz',   TRUE);
+
+-- PLAYER STATS (one per gameInstanceID 19..23)
+INSERT IGNORE INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins) VALUES
+(19, 320, 200, 60, 52000, 150, 780, 18),  -- s1mple
+(20, 310, 190, 75, 51000, 145, 770, 17),  -- ZywOo
+(21, 300, 210, 65, 50500, 140, 760, 16),  -- NiKo
+(22, 290, 220, 70, 49500, 135, 740, 15),  -- m0NESY
+(23, 305, 205, 68, 50800, 142, 750, 16);  -- ropz
+
+-- CS2 WEAPONS (use new IDs so we don't collide with CSGO's gameID=2 weapons)
+-- expected weaponIDs 13..18
+INSERT IGNORE INTO weapons (gameID, weaponType, name) VALUES
+(3, 'Rifle',  'AK-47'),
+(3, 'Rifle',  'M4A1-S'),
+(3, 'Sniper', 'AWP'),
+(3, 'SMG',    'MP9'),
+(3, 'Pistol', 'Desert Eagle'),
+(3, 'Shotgun','Nova');
+
+-- WEAPON STATS (2 per player, minimal but realistic)
+INSERT IGNORE INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought) VALUES
+-- s1mple
+(19, 13, 15.0, 150, 0.28, 70),
+(19, 15,  9.0,  85, 0.34, 40),
+-- ZywOo
+(20, 13, 14.5, 140, 0.27, 68),
+(20, 15, 10.0,  90, 0.35, 42),
+-- NiKo
+(21, 14, 13.0, 130, 0.26, 60),
+(21, 13, 12.0, 125, 0.27, 58),
+-- m0NESY
+(22, 15, 12.0, 110, 0.33, 38),
+(22, 13, 11.5, 120, 0.28, 55),
+-- ropz
+(23, 14, 12.5, 118, 0.26, 57),
+(23, 16,  8.0,  60, 0.30, 30);
+
+-- CS2 MAPS 
+INSERT IGNORE INTO map (gameID, POIs, Name) VALUES
+(3, 'A Site, B Site, Mid', 'Ancient'),
+(3, 'A Site, B Site, Yard', 'Nuke'),
+(3, 'A Site, B Site, Park', 'Overpass');
+
+-- CS2 MATCHES 
+INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank) VALUES
+(3, 7, '2025-08-13 20:00:00', 'Ranked', 'Global Elite'),
+(3, 8, '2025-08-14 21:00:00', 'Ranked', 'Global Elite'),
+(3, 9, '2025-08-15 19:00:00', 'Ranked', 'Global Elite');
+
+-- MATCH STATS (5 players across each of the 3 CS2 matches)
+-- Match 1 (Ancient) matchID=10
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+(10, 19, 27, 14, 6, 13, 86, 58, 36, 30, TRUE,  4600, 4),
+(10, 20, 25, 15, 7, 12, 84, 56, 36, 30, TRUE,  4400, 3),
+(10, 21, 22, 17, 5, 11, 80, 54, 36, 30, FALSE, 4100, 3),
+(10, 22, 18, 20, 8,  9, 72, 48, 36, 30, FALSE, 3600, 2),
+(10, 23, 30, 12, 4, 16, 92, 65, 36, 30, TRUE,  5200, 5);
+
+-- Match 2 (Nuke) matchID=11
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+(11, 19, 24, 15, 8, 12, 83, 57, 36, 30, TRUE,  4400, 3),
+(11, 20, 26, 14, 9, 14, 85, 58, 36, 30, TRUE,  4500, 4),
+(11, 21, 21, 16, 6, 10, 79, 53, 36, 30, FALSE, 3950, 3),
+(11, 22, 17, 19, 8,  8, 70, 46, 36, 30, FALSE, 3600, 2),
+(11, 23, 28, 12, 4, 15, 90, 62, 36, 30, TRUE,  5000, 4);
+
+-- Match 3 (Overpass) matchID=12
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+(12, 19, 20, 17, 7,  9, 75, 50, 37, 30, FALSE, 3800, 2),
+(12, 20, 24, 13,10, 13, 83, 57, 37, 30, TRUE,  4400, 4),
+(12, 21, 23, 16, 6, 11, 81, 55, 37, 30, FALSE, 4000, 3),
+(12, 22, 16, 21, 9,  7, 68, 44, 37, 30, FALSE, 3500, 1),
+(12, 23, 29, 12, 4, 16, 91, 64, 37, 30, TRUE,  5100, 4);
