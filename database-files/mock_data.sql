@@ -1,55 +1,4 @@
 USE OmniDatabase;
-INSERT IGNORE INTO games (gameID, name) VALUES
-(1, 'Valorant'),
-(2, 'CS2');
-
-INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
-('KaiGhost', 0, 1, 1, 'test123');
-
-INSERT IGNORE INTO gamesProfiles ( gameID, profileID, gameUsername, showOnDashboard) VALUES
-(1, 1, 'KaiGhost', 1);
-
-INSERT IGNORE INTO map (gameID, POIs, Name) VALUES
-  (1, 'A Site,B Site,Mid', 'Ascent');
-
-INSERT IGNORE INTO weapons (gameID, weaponType, name) VALUES
- (1, 'Rifle',  'Vandal');
-
-INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
-VALUES
-(1, 1, '2025-08-01 18:30:00','Ranked', 'Immortal');
-
-INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots,shotsHit, matchDuration, rounds, win, damageDealt,firstBloods)
-VALUES
-(1, 1, 22, 15, 5, 12, 300, 129, 2100, 16, 1, 10370, 2); 
-
-INSERT INTO playerStats
-(gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins)
-VALUES
-(1, 258, 191, 72, 33850, 132, 1082, 34);
-
-INSERT IGNORE INTO weaponStats
-(statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought)
-VALUES
-(1, 1, 4.000, 180, 0.520, 150),
-(2, 2, 2.000,  78, 0.470,  46);
-
-INSERT IGNORE INTO mapStats
-(statTableID, gameID, weaponType, name)
-VALUES
-(1, 1, 'Rifle',  'Ascent'),
-(1, 1, 'Sniper', 'Bind');
-
-INSERT IGNORE INTO goals
-(gameID, dateCreated, dateAchieved, description)
-VALUES
-(1, NOW(), NULL, 'Maintain 60% HS over next 10 scrims');
-
-INSERT IGNORE INTO milestones
-(profileID, goalID)
-VALUES
-(1, 1);
-
 -- DATA FOR EMMA SMITH/PERSONA 1 (VALORANT)
 -- ===================================
 -- Mock Data Inserts for Emma Smith User Stories
@@ -206,6 +155,61 @@ INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists,
 (3, 6, 22, 14, 6, 12, 80, 54, 33, 24, FALSE, 4100, 4), -- OpponentAce
 (3, 7, 19, 15, 5, 10, 75, 50, 33, 24, FALSE, 3800, 3); -- OpponentShadow
 
+-- DATA FOR KAI NGUYEN/PERSONA 3 (VALORANT)
+-- ===================================
+-- Mock Data Inserts for Kai Nguyen User Stories
+-- ===================================
+INSERT IGNORE INTO games (gameID, name) VALUES
+(1, 'Valorant'),
+(2, 'CS2');
+
+INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
+('KaiGhost', 0, 1, 1, 'test123');
+
+INSERT IGNORE INTO gamesProfiles ( gameID, profileID, gameUsername, showOnDashboard) VALUES
+(1, 9, 'KaiGhost', 1);
+
+INSERT IGNORE INTO map (gameID, POIs, Name) VALUES
+  (1, 'A Site,B Site,Mid', 'Ascent');
+
+INSERT IGNORE INTO weapons (gameID, weaponType, name) VALUES
+ (1, 'Rifle',  'Vandal');
+
+INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
+VALUES
+(1, 1, '2025-08-01 18:30:00','Ranked', 'Immortal');
+
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots,shotsHit, matchDuration, rounds, win, damageDealt,firstBloods)
+VALUES
+(4, 8, 22, 15, 5, 12, 300, 129, 2100, 16, 1, 10370, 2); 
+
+INSERT INTO playerStats
+(gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins)
+VALUES
+(8, 258, 191, 72, 33850, 132, 1082, 34);
+
+INSERT IGNORE INTO weaponStats
+(statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought)
+VALUES
+(1, 1, 4.000, 180, 0.520, 150),
+(2, 2, 2.000,  78, 0.470,  46);
+
+INSERT IGNORE INTO mapStats
+(statTableID, gameID, weaponType, name)
+VALUES
+(1, 1, 'Rifle',  'Ascent'),
+(1, 1, 'Sniper', 'Bind');
+
+INSERT IGNORE INTO goals
+(gameID, dateCreated, dateAchieved, description)
+VALUES
+(1, NOW(), NULL, 'Maintain 60% HS over next 10 scrims');
+
+INSERT IGNORE INTO milestones
+(profileID, goalID)
+VALUES
+(1, 2);
+
 -- CSGO
 
 -- ===================================
@@ -313,3 +317,81 @@ VALUES
 (6, 12, 28, 12, 4, 15, 90, 62, 37, 30, TRUE, 5000, 4);
 
 
+-- Valorant
+
+-- ===================================
+-- Mock Data Inserts for Valorant (First 5 Players)
+-- ===================================
+
+-- PROFILES (five new Valorant players)
+INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
+('TenZ',    FALSE, TRUE, TRUE, 'pass123'),   -- profileID 10
+('Derke',   FALSE, TRUE, TRUE, 'pass123'),   -- profileID 11
+('aspas',   FALSE, TRUE, TRUE, 'pass123'),   -- profileID 12
+('Boaster', FALSE, TRUE, TRUE, 'pass123'),   -- profileID 13
+('Leaf',    FALSE, TRUE, TRUE, 'pass123');   -- profileID 14
+
+-- GAME PROFILES (link to Valorant)
+INSERT IGNORE INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) VALUES
+(1, 10, 'TenZ', 1),    -- gameInstanceID 14
+(1, 11, 'Derke', 1),   -- gameInstanceID 15
+(1, 12, 'aspas', 1),   -- gameInstanceID 16
+(1, 13, 'Boaster', 1), -- gameInstanceID 17
+(1, 14, 'Leaf', 1);    -- gameInstanceID 18
+
+-- PLAYER STATS (one row per Valorant player)
+INSERT IGNORE INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins) VALUES
+(14, 320, 210, 70, 54000, 165, 820, 18),  -- TenZ
+(15, 290, 200, 85, 50500, 150, 790, 17),  -- Derke
+(16, 340, 190, 60, 56000, 175, 840, 19),  -- aspas
+(17, 260, 230, 95, 48000, 130, 760, 15),  -- Boaster
+(18, 300, 210, 80, 52000, 155, 800, 16);  -- Leaf
+
+-- WEAPON STATS (use existing Valorant weaponIDs)
+INSERT IGNORE INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought) VALUES
+-- TenZ
+(14, 1, 15.0, 150, 0.29, 70),  -- Vandal
+(14, 2, 10.0,  90, 0.28, 45),  -- Phantom
+-- Derke
+(15, 1, 14.5, 140, 0.28, 65),  -- Vandal
+(15, 4,  9.0,  80, 0.35, 40),  -- Operator
+-- aspas
+(16, 1, 16.0, 160, 0.30, 75),  -- Vandal
+(16, 3,  8.5,  70, 0.31, 38),  -- Spectre
+-- Boaster
+(17, 2, 13.0, 120, 0.27, 60),  -- Phantom
+(17, 5,  5.0,  40, 0.33, 25),  -- Ghost
+-- Leaf
+(18, 1, 15.5, 145, 0.29, 68),  -- Vandal
+(18, 4,  7.5,  65, 0.34, 32);  -- Operator
+
+-- MATCHES (three Valorant matches after your CSGO set)
+INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank) VALUES
+(1, 1, '2025-08-10 20:00:00', 'Ranked', 'Radiant'), 
+(1, 2, '2025-08-11 21:00:00', 'Ranked', 'Radiant'), 
+(1, 3, '2025-08-12 19:00:00', 'Ranked', 'Radiant'); 
+
+-- MATCH STATS
+-- Match 1 (Ascent)
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+(7, 14, 25, 15, 6, 12, 82, 56, 36, 24, TRUE,  4300, 3), -- TenZ
+(7, 15, 28, 14, 9, 15, 88, 60, 36, 24, TRUE,  4700, 4), -- Derke
+(7, 16, 20, 18, 7, 10, 78, 52, 36, 24, FALSE, 4000, 3), -- aspas
+(7, 17, 18, 20, 5,  9, 72, 48, 36, 24, FALSE, 3700, 2), -- Boaster
+(7, 18, 30, 12, 4, 17, 92, 65, 36, 24, TRUE,  5200, 5); -- Leaf
+
+-- Match 2 (Bind)
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+(8, 14, 27, 13, 8, 14, 85, 58, 36, 24, TRUE,  4500, 4),
+(8, 15, 26, 14, 9, 14, 85, 58, 36, 24, TRUE,  4500, 4),
+(8, 16, 22, 17, 5, 11, 80, 54, 36, 24, FALSE, 4100, 3),
+(8, 17, 17, 19, 8,  8, 70, 46, 36, 24, FALSE, 3600, 2),
+(8, 18, 32, 11, 3, 18, 95, 68, 36, 24, TRUE,  5400, 5);
+
+-- Match 3 (Haven)
+INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+(9, 14, 19, 17, 7,  9, 75, 50, 37, 24, FALSE, 3800, 2),
+(9, 15, 24, 13,10, 13, 83, 57, 37, 24, TRUE,  4400, 4),
+(9, 16, 21, 16, 6, 10, 79, 53, 37, 24, FALSE, 3950, 3),
+(9, 17, 16, 21, 9,  7, 68, 44, 37, 24, FALSE, 3500, 1),
+(9, 18, 28, 12, 4, 15, 90, 62, 37, 24, TRUE,  5000, 4);
