@@ -493,3 +493,77 @@ INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, 
 (12, 21, 23, 16, 6, 11, 81, 55, 37, 30, FALSE, 4000, 3),
 (12, 22, 16, 21, 9,  7, 68, 44, 37, 30, FALSE, 3500, 1),
 (12, 23, 29, 12, 4, 16, 91, 64, 37, 30, TRUE,  5100, 4);
+
+-- DATA FOR JORDAN LEE/PERSONA 4
+-- ===================================
+-- Mock Data Inserts for Jordan Lee User Stories
+-- ===================================
+
+-- ====== BASE TABLES ======
+-- PROFILES (role management via isAdmin/isPremium/isPublic)
+INSERT INTO profiles (profileID, username, isAdmin, isPublic, isPremium, password) VALUES
+  (1, 'jordan_lee', 1, 1, 1, 'hashed_pw_jordan'), -- admin, public, premium
+  (2, 'mod_kim',     1, 1, 0, 'hashed_pw_kim'), -- admin, public
+  (3, 'analyst_ryu', 0, 1, 0, 'hashed_pw_ryu'), -- public
+  (4, 'viewer_amy',  0, 1, 0, 'hashed_pw_amy'); -- public
+
+-- GAMES 
+INSERT INTO games (gameID, name) VALUES
+  (10, 'Apex Legends'),
+  (11, 'Valorant'),
+  (12, 'Overwatch 2'),
+  (99, 'Extraction Royale'); -- Games
+
+-- MAPS
+INSERT INTO map (mapID, gameID, Name) VALUES
+  (100, 10, 'Worlds Edge'), -- Apex Legends map
+  (101, 10, 'Olympus'), -- Apex Legends map
+  (110, 11, 'Ascent'), -- Valorant map
+  (111, 11, 'Bind'), -- Valorant map
+  (120, 12, 'New Junk City'), -- Overwatch 2 map
+  (190, 99, 'Silo Complex'); -- Extraction Royale map
+
+-- ====== ACCOUNT LINKS / OVERLAY ======
+-- gamesProfiles (sync overlay to game playing based on account active)
+INSERT INTO gamesProfiles (gameInstanceID, gameID, profileID, gameUsername, showOnDashboard) VALUES
+  (1000, 10, 1, 'J0RD4N', 1), -- Apex, jordan_lee account, on leaderboard
+  (1001, 11, 1, 'J0RD4N#NA', 1), -- Valorant, jordan_lee account, on leaderboard
+  (1002, 12, 1, 'Jord0W2', 0), -- Overwatch 2, jordan_lee account, not on leaderboard
+  (2000, 10, 3, 'RyuStats', 1), -- Apex, analyst_ryu account, on leaderboard
+  (3000, 99, 1, 'JordanXR', 1); -- Extraciton Royale, jordan_lee account, on leaderboard
+
+-- ====== MATCHES & STATS ======
+INSERT INTO matches (matchID, gameID, mapID, matchDate, matchType, lobbyRank) VALUES
+  (5001, 10, 100, '2024-10-01 19:05:00', 'ranked', 'Gold'),
+  (5002, 10, 101, '2024-11-01 20:12:00', 'ranked', 'Platinum'),
+  (5003, 10, 100, '2025-01-10 21:30:00', 'ranked', 'Diamond'),
+  (5004, 10, 101, '2025-01-12 21:40:00', 'ranked', 'Diamond');
+  -- Will be used to check if player stats are crazy
+
+INSERT INTO matchStats (matchStatsID, matchID, gameInstanceID, kills, deaths, assists, headshots, totalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+  -- normal average game
+  (9001, 5001, 1000, 6, 4, 3, 2, 120, 45, 1800, 1, 1, 1150, 0),
+  (9002, 5002, 1000, 8, 5, 4, 3, 150, 60, 1900, 1, 1, 1400, 1),
+  -- slightly better game
+  (9003, 5003, 1000, 12, 6, 5, 5, 210, 98, 2100, 1, 1, 2100, 2), -- 
+  -- Game far better then previous stats
+  (9004, 5004, 1000, 60, 0, 10, 25, 160, 158, 900, 1, 1, 5200, 5);
+
+-- Overwatch 2 for jordan account not on dashboard
+INSERT INTO matches (matchID, gameID, mapID, matchDate, matchType, lobbyRank) VALUES
+  (5201, 12, 120, '2024-11-20 13:10:00', 'quickplay', 'Unrated');
+INSERT INTO matchStats (matchStatsID, matchID, gameInstanceID, kills, deaths, assists, headshots, totalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+  (9201, 5201, 1002, 30, 20, 18, 0, 500, 250, 1800, 1, 1, 6400, 0);
+INSERT INTO matchStats (matchStatsID, matchID, gameInstanceID, kills, deaths, assists, headshots, totalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
+  (9901, 5901, 3000, 4, 3, 1, 1, 90, 35, 1500, 1, 0, 620, 0);
+
+-- ====== COMMUNITY INTEREST PROXY ======
+-- Use goals as "content ideas" tied to games to infer interest from community.
+INSERT INTO goals (goalsID, gameID, dateCreated, description) VALUES
+  (7001, 10, '2024-12-01 10:00:00', 'Improve at Apex rotation'),
+  (7002, 11, '2024-12-28 10:00:00', 'Learn Valorant Ascent execute'),
+
+-- Milestones can reflect content progress or KPIs (view targets)
+INSERT INTO milestones (milestoneID, profileID, goalID) VALUES
+  (8001, 1, 7001),
+  (8002, 1, 7002),
