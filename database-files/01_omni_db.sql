@@ -84,11 +84,12 @@ CREATE TABLE `weaponStats` (
 DROP TABLE IF EXISTS `mapStats`;
 CREATE TABLE `mapStats` (
    statTableID INT NOT NULL,
-   gameID INT NOT NULL,
-   weaponType VARCHAR(50),
-   name VARCHAR(50) NOT NULL,
+   mapID INT NOT NULL,
+   kills INT NOT NULL,
+   wins INT NOT NULL,
+   losses INT NOT NULL,
    FOREIGN KEY (statTableID) REFERENCES playerStats(statTableID),
-   FOREIGN KEY (gameID) REFERENCES games(gameID)
+   FOREIGN KEY (mapID) REFERENCES map(mapID)
 );
 
 
