@@ -8,19 +8,19 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title('Game Administration Page')
+st.title('Administration Page')
 
 st.write('\n\n')
 st.write('Options')
 
 ##Name of game to add
-st.text_input("Name of Game to Add", value="", max_chars=None, key=None, type="default", help=None, autocomplete=None, on_change=None, args=None, kwargs=None, placeholder=None, disabled=False, label_visibility="visible", icon=None, width="stretch")
+st.text_input("Name of Player", value="", max_chars=None, key=None, type="default", help=None, autocomplete=None, on_change=None, args=None, kwargs=None, placeholder=None, disabled=False, label_visibility="visible", icon=None, width="stretch")
 
 
 ##List of added Games
-games = []
+profile = []
 
-st.table(games)
+st.table(profile)
 
 if st.button("⬅ Back to Admin Home"):
     st.switch_page("pages/17_Jordan_Lee_home.py")
