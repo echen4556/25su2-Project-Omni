@@ -45,7 +45,7 @@ else:
 if st.button('🤝 Compare Players',
              type='primary',
              use_container_width=True):
-    st.switch_page('compare_players')
+    st.switch_page('pages/32_Select_Players.py')
 
 
 
