@@ -11,7 +11,7 @@ st.set_page_config(layout='wide')
 SideBarLinks()
 
 # Title
-st.title(f"Welcome to Omni, {st.session_state['first_name']}.")
+st.title(f"Your Milestones and Goals:")
 st.write('')
 st.write('Track your progress with milestones and set actionable goals to stay on top of your performance.')
 st.write('')
@@ -20,7 +20,7 @@ st.write('')
 st.subheader("🏆 Milestones")
 st.write("View and manage your key achievements and completed objectives.")
 
-if st.button('📅 View All Milestones',
+if st.button('🎯 View All Milestones',
              type='primary',
              use_container_width=True):
     st.switch_page('pages/06_View_Milestones.py')
