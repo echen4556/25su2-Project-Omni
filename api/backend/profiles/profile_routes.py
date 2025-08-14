@@ -61,3 +61,15 @@ def delete_profile(profileID):
     cursor.execute('DELETE FROM profiles WHERE profileID=%s', (profileID,))
     db.get_db().commit()
     return 'Profile deleted!', 200
+
+@profiles.route('/profiles/<profileID>/games', methods=['GET'])
+def get_user_games_route(profileID):
+    current_app.logger.info(f'GET /profiles/{profileID}/games')
+    cursor = db.get_db().cursor()
+    cursor.execute(
+        'SELECT t2.gameID, t2.name FROM gamesProfiles t1 JOIN games t2 ON t1.gameID = t2.gameID WHERE t1.profileID = %s',
+        (profileID,)
+    )
+    games = cursor.fetchall()
+    return jsonify(games), 200
+
