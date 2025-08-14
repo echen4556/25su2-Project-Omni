@@ -10,34 +10,29 @@ st.set_page_config(layout='wide')
 # Show sidebar links for the current user
 SideBarLinks()
 
-# Get premium status from session (set during login)
-is_premium = st.session_state.get('isPremium', False)
-
 # Title and welcome message
-st.title(f"Welcome to Omni.gg, {st.session_state['first_name']}.")
+st.title(f"Welcome to Omni.gg, {st.session_state['username']}.")
 st.write('')
 st.write('Your central hub for game analytics, player stats, and strategy tools.')
 st.write('')
 
-# Navigation buttons for Omni app features. These are for all users.
+# Navigation buttons for Omni app features
 if st.button('📊 View Player Stats Dashboard',
-            type='primary',
-            use_container_width=True):
-    st.switch_page('player_stats_dashboard')
+             type='primary',
+             use_container_width=True):
+    st.switch_page('')
 
-# Buttons for premium features.
 if st.button('🔫 Weapon Analytics',
              type='primary',
              use_container_width=True):
-    st.switch_page('weapon_analytics')
+    st.switch_page('')
 
 if st.button('🗺️ Map Insights',
              type='primary',
              use_container_width=True):
-    st.switch_page('map_insights')
+    st.switch_page('')
 
-# A button for a general feature.
 if st.button('🤝 Compare Players',
-            type='primary',
-            use_container_width=True):
-    st.switch_page('compare_players')
+             type='primary',
+             use_container_width=True):
+    st.switch_page('')
