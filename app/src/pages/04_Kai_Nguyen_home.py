@@ -20,7 +20,7 @@ st.write('')
 if st.button('📊 View Player Stats Dashboard',
              type='primary',
              use_container_width=True):
-    st.switch_page('player_stats_dashboard')
+    st.switch_page('View_Stats')
 
 if st.button('🔫 Weapon Analytics',
              type='primary',
@@ -35,4 +35,4 @@ if st.button('🗺️ Map Insights',
 if st.button('🤝 Compare Players',
              type='primary',
              use_container_width=True):
-    st.switch_page('View_Statspages/32_Select_Players.py')
+    st.switch_page('pages/32_Select_Players.py')
