@@ -18,6 +18,9 @@ if 'profileID' not in st.session_state:
     st.error("Could not load game stats. Please log in first.")
     st.stop()
 
+# Get premium status from session
+is_premium = st.session_state.get('isPremium', False)
+
 # Get game and profile info from URL query parameters
 query_params = st.query_params.to_dict()
 selected_game_name = query_params.get("game")
@@ -120,28 +123,38 @@ else:
 
     with col_w:
         st.subheader("Weapon Performance")
-        if not weapon_stats_df.empty:
-            # Sort by usage time to find most used weapons
-            sorted_weapons = weapon_stats_df.sort_values(by="totalUsageTime", ascending=False)
-            for index, row in sorted_weapons.iterrows():
-                with st.expander(f"**{row['name']}**"):
-                    st.metric("Kills with Weapon", row['kills'])
-                    st.metric("Accuracy", f"{row['accuracy']:.1%}")
-                    st.metric("Total Usage (Hours)", f"{row['totalUsageTime']:.2f}")
+        if is_premium:
+            if not weapon_stats_df.empty:
+                # Sort by usage time to find most used weapons
+                sorted_weapons = weapon_stats_df.sort_values(by="totalUsageTime", ascending=False)
+                for index, row in sorted_weapons.iterrows():
+                    with st.expander(f"**{row['name']}**"):
+                        st.metric("Kills with Weapon", row['kills'])
+                        st.metric("Accuracy", f"{row['accuracy']:.1%}")
+                        st.metric("Total Usage (Hours)", f"{row['totalUsageTime']:.2f}")
+            else:
+                st.info("No weapon stats available.")
         else:
-            st.info("No weapon stats available.")
+            st.info("Upgrade to Premium to unlock detailed weapon stats.")
+            if st.button("💎 Upgrade Now", key="weapon_upgrade", use_container_width=True):
+                st.switch_page("premium_upgrade")
 
     with col_m:
         st.subheader("Map Performance")
-        if not map_stats_df.empty:
-            # Calculate total matches to find most played maps
-            map_stats_df['totalMatches'] = map_stats_df['wins'] + map_stats_df['losses']
-            sorted_maps = map_stats_df.sort_values(by="totalMatches", ascending=False)
-            for index, row in sorted_maps.iterrows():
-                with st.expander(f"**{row['name']}**"):
-                    win_rate = row['wins'] / max(1, row['totalMatches'])
-                    st.metric("Win Rate", f"{win_rate:.1%}")
-                    st.metric("Total Wins", row['wins'])
-                    st.metric("Total Losses", row['losses'])
+        if is_premium:
+            if not map_stats_df.empty:
+                # Calculate total matches to find most played maps
+                map_stats_df['totalMatches'] = map_stats_df['wins'] + map_stats_df['losses']
+                sorted_maps = map_stats_df.sort_values(by="totalMatches", ascending=False)
+                for index, row in sorted_maps.iterrows():
+                    with st.expander(f"**{row['name']}**"):
+                        win_rate = row['wins'] / max(1, row['totalMatches'])
+                        st.metric("Win Rate", f"{win_rate:.1%}")
+                        st.metric("Total Wins", row['wins'])
+                        st.metric("Total Losses", row['losses'])
+            else:
+                st.info("No map stats available.")
         else:
-            st.info("No map stats available.")
+            st.info("Upgrade to Premium to unlock detailed map stats.")
+            if st.button("💎 Upgrade Now", key="map_upgrade", use_container_width=True):
+                st.switch_page("premium_upgrade")
