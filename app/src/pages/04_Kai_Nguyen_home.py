@@ -20,19 +20,19 @@ st.write('')
 if st.button('📊 View Player Stats Dashboard',
              type='primary',
              use_container_width=True):
-    st.switch_page('')
+    st.switch_page('player_stats_dashboard')
 
 if st.button('🔫 Weapon Analytics',
              type='primary',
              use_container_width=True):
-    st.switch_page('')
+    st.switch_page('weapon_analytics')
 
 if st.button('🗺️ Map Insights',
              type='primary',
              use_container_width=True):
-    st.switch_page('')
+    st.switch_page('map_insights')
 
 if st.button('🤝 Compare Players',
              type='primary',
              use_container_width=True):
-    st.switch_page('')
+    st.switch_page('View_Stats')
