@@ -44,36 +44,36 @@ st.write('#### Hi! As which user would you like to log in?')
 # functionality, we put a button on the screen that the user 
 # can click to MIMIC logging in as that mock user. 
 
-if st.button("Act as John, a Political Strategy Advisor", 
+if st.button('Act as Emma Smith, a Casual Gamer', 
             type = 'primary', 
             use_container_width=True):
-    # when user clicks the button, they are now considered authenticated
     st.session_state['authenticated'] = True
-    # we set the role of the current user
-    st.session_state['role'] = 'pol_strat_advisor'
-    # we add the first name of the user (so it can be displayed on 
-    # subsequent pages). 
-    st.session_state['first_name'] = 'John'
-    # finally, we ask streamlit to switch to another page, in this case, the 
-    # landing page for this particular user type
-    logger.info("Logging in as Political Strategy Advisor Persona")
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+    st.session_state['role'] = 'casual_gamer'
+    st.session_state['username'] = 'Emma'
+    st.switch_page('pages/03_Emma_Smith_home')
 
 if st.button('Act as Matthew Bones, a Data Analyst for Team Liquid', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'premium'
+    st.session_state['role'] = 'data_analyst'
     st.session_state['username'] = 'Matthew'
     st.switch_page('pages/05_Matthew_Bones_home.py')
 
-if st.button('Act as Jordan lee, the System Administrator', 
+if st.button('Act as Kai Nguyen, a Pro Gamer', 
+            type = 'primary', 
+            use_container_width=True):
+    st.session_state['authenticated'] = True
+    st.session_state['role'] = 'pro_gamer'
+    st.session_state['username'] = 'Kai'
+    st.switch_page('pages/04_Kai_Nguyen_home')
+
+if st.button('Act as Jordan Lee, a System Administrator', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
-    st.switch_page('pages/20_Admin_Home.py')
-
+    st.session_state['username'] = 'Jordan'
+    st.switch_page('pages/17_Jordan_Lee_home')
 
 
