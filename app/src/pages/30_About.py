@@ -8,10 +8,12 @@ st.write("# About this App")
 
 st.markdown(
     """
-    This is a demo app for Data and Software in International Government and Politics Dialogue 2025 Project Course.  
+    This is a demo app for analyzing and consolidating the statistical data of
+    video game players of various games.
 
-    The goal of this demo is to provide information on the tech stack 
-    being used as well as demo some of the features of the various platforms. 
+    The goal of this demo is to provide a model of our app that will allow the user to utilize
+    all of our app's planned features such as viewing player data, weapon data, map data, and 
+    comparing players to one another via their data. 
 
     Stay tuned for more information and features to come!
     """
