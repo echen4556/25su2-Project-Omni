@@ -9,10 +9,6 @@ API_BASE_URL = 'http://api:4000'
 
 # A helper function to fetch a list of games for the current user
 def get_user_games(profile_id):
-    """
-    Fetches a list of games associated with a given profile ID.
-    Uses the GET /profiles/{profileID}/games route from the API.
-    """
     try:
         response = requests.get(f"{API_BASE_URL}/profiles/{profile_id}/games")
         response.raise_for_status()
@@ -24,10 +20,6 @@ def get_user_games(profile_id):
 
 # A helper function to fetch a list of weapons for a specific game
 def get_game_weapons(game_id):
-    """
-    Fetches a list of weapons for a specific game ID.
-    Uses the GET /weapons/{gameID}/ route from the API.
-    """
     try:
         response = requests.get(f"{API_BASE_URL}/weapons/{game_id}/")
         response.raise_for_status()
@@ -39,10 +31,6 @@ def get_game_weapons(game_id):
 
 # A helper function to fetch player statistics for a specific weapon in a specific game
 def get_weapon_stats(profile_id, game_id, weapon_id):
-    """
-    Fetches player stats for a specific weapon.
-    Uses the GET /playerstats/{profileID}/{gameID}/{weaponID} route from the API.
-    """
     try:
         response = requests.get(f"{API_BASE_URL}/playerstats/{profile_id}/{game_id}/{weapon_id}")
         response.raise_for_status()
@@ -72,7 +60,7 @@ if not is_premium:
 
 # Title of the page
 st.title("🔫 Weapon Analytics")
-st.write("View detailed statistics on your weapon performance.")
+st.write("View detailed statistics on your weapon performance from any game.")
 
 # Fetch the list of games to populate the selectbox
 games = get_user_games(profile_id)
