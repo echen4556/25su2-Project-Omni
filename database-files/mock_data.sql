@@ -56,7 +56,8 @@ INSERT INTO games (name) VALUES
 ('Valorant');
 
 -- PROFILES (players)
-INSERT INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
+INSERT INTO profiles (username, isAdmin, isPublic, isPremium, password) 
+VALUES
 ('MatthewBones', FALSE, TRUE, TRUE, 'pass123'),
 ('Jamppi', FALSE, TRUE, TRUE, 'pass123'),
 ('Nivera', FALSE, TRUE, TRUE, 'pass123'),
@@ -66,17 +67,20 @@ INSERT INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
 ('OpponentShadow', FALSE, TRUE, FALSE, 'pass123');
 
 -- GAME PROFILES (linking players to Valorant)
-INSERT INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) VALUES
-(1, 1, 'MattBones', TRUE),
-(1, 2, 'JamppiTL', TRUE),
-(1, 3, 'NiveraTL', TRUE),
-(1, 4, 'SoulcasTL', TRUE),
-(1, 5, 'ScreaMTL', TRUE),
-(1, 6, 'AceRival', TRUE),
-(1, 7, 'ShadowRival', TRUE);
+INSERT INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) 
+VALUES
+(1, 111, 'MattBones', TRUE),
+(1, 222, 'JamppiTL', TRUE),
+(1, 333, 'NiveraTL', TRUE),
+(1, 444, 'SoulcasTL', TRUE),
+(1, 555, 'ScreaMTL', TRUE),
+(1, 666, 'AceRival', TRUE),
+(1, 777, 'ShadowRival', TRUE);
 
 -- PLAYER STATS
-INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins) VALUES
+INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, 
+totalHeadshots, totalShotsHit, totalWins) 
+VALUES
 (1, 180, 150, 40, 34500, 80, 520, 12),  -- MatthewBones
 (2, 250, 140, 60, 40000, 120, 680, 15), -- Jamppi
 (3, 220, 160, 55, 37000, 110, 640, 14), -- Nivera
@@ -95,7 +99,9 @@ INSERT INTO weapons (gameID, weaponType, name) VALUES
 (1, 'Shotgun', 'Judge');
 
 -- WEAPON STATS
-INSERT INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought) VALUES
+INSERT INTO weaponStats (statTableID, weaponID, totalUsageTime, 
+kills, accuracy, amountBought) 
+VALUES
 -- MatthewBones
 (1, 1, 12.5, 90, 0.27, 50),
 (1, 2, 8.0, 60, 0.25, 35),
@@ -115,14 +121,15 @@ INSERT INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy,
 (5, 4, 7.5, 80, 0.34, 35);
 
 -- MAPS
-INSERT INTO map (gameID, POIs, Name) VALUES
+INSERT INTO map (gameID, POIs, Name) 
+VALUES
 (1, 'A Site, B Site, Mid', 'Ascent'),
 (1, 'A Site, B Site, Hookah', 'Bind'),
 (1, 'A Site, B Site, C Site', 'Haven');
 
 -- MATCHES
 INSERT INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
- VALUES
+VALUES
 (1, 1, '2025-08-01 20:00:00', 'Ranked', 'Immortal'),
 (1, 2, '2025-08-02 21:00:00', 'Ranked', 'Immortal'),
 (1, 3, '2025-08-03 19:00:00', 'Ranked', 'Immortal');
@@ -131,7 +138,7 @@ INSERT INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
 -- Match 1 (Ascent)
 INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists,
 Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods)
- VALUES
+VALUES
 (1, 1, 20, 15, 5, 10, 75, 50, 35, 24, TRUE, 3800, 3), -- MatthewBones
 (1, 2, 25, 12, 7, 15, 80, 55, 35, 24, TRUE, 4200, 4), -- Jamppi
 (1, 6, 18, 16, 4, 8, 70, 45, 35, 24, FALSE, 3400, 2), -- OpponentAce
@@ -208,7 +215,7 @@ VALUES
 INSERT IGNORE INTO milestones
 (profileID, goalID)
 VALUES
-(1, 2);
+(111, 2);
 
 -- CSGO
 
@@ -224,11 +231,11 @@ VALUES
 -- GAME PROFILES for CSGO (gameID = 2)
 INSERT INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) 
 VALUES
-(2, 1, 'MattBones', TRUE),
-(2, 2, 'Jamppi', TRUE),
-(2, 3, 'Nivera', TRUE),
-(2, 4, 'Soulcas', TRUE),
-(2, 5, 'ScreaM', TRUE);
+(2, 111, 'MattBones', TRUE),
+(2, 222, 'Jamppi', TRUE),
+(2, 333, 'Nivera', TRUE),
+(2, 444, 'Soulcas', TRUE),
+(2, 555, 'ScreaM', TRUE);
 
 -- PLAYER STATS for CSGO
 INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, 
