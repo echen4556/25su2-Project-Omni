@@ -72,7 +72,7 @@ DROP TABLE IF EXISTS `weaponStats`;
 CREATE TABLE `weaponStats` (
    statTableID INT NOT NULL,
    weaponID INT NOT NULL,
-   totalUsageTime DOUBLE(4, 3) NOT NULL,
+   totalUsageTime DOUBLE NOT NULL,
    kills INT NOT NULL,
    accuracy DOUBLE(4,3),
    amountBought INT,

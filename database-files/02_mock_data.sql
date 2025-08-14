@@ -1,14 +1,26 @@
 USE OmniDatabase;
+
+-- GAMES
+INSERT IGNORE INTO games (gameID, name) VALUES
+(1, 'Valorant'),
+(2, 'CS2');
+
 -- DATA FOR EMMA SMITH/PERSONA 1 (VALORANT)
 -- ===================================
 -- Mock Data Inserts for Emma Smith User Stories
 -- ===================================
 
 INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
-('EmmaSmith', 0, 1, 0, 'password');
+('EmmaSmith', FALSE, TRUE, FALSE, 'password');
 
-INSERT IGNORE INTO gamesProfiles ( gameID, profileID, gameUsername, showOnDashboard) VALUES
-(1, 2, 'EmmaSmith', 1);
+INSERT IGNORE INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) 
+VALUES
+(1, 1, 'EmmaSmith', 1);
+
+INSERT INTO playerStats
+(gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins)
+VALUES
+(1, 45, 63, 25, 25330, 34, 132, 7);
 
 INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
 VALUES
@@ -16,12 +28,7 @@ VALUES
 
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt,firstBloods)
 VALUES
-(2, 2, 14, 23, 7, 2, 343, 94, 2100, 16, 0, 9340, 1); 
-
-INSERT INTO playerStats
-(gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins)
-VALUES
-(2, 45, 63, 25, 25330, 34, 132, 7);
+(999, 1, 14, 23, 7, 2, 343, 94, 2100, 16, 0, 9340, 1); 
 
 INSERT IGNORE INTO weaponStats
 (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought)
@@ -43,17 +50,13 @@ VALUES
 INSERT IGNORE INTO milestones
 (profileID, goalID)
 VALUES
-(2, 2);
+(1, 2);
 
 
 -- DATA FOR MATTHEW BONES/PERSONA 2 (VALORANT)
 -- ===================================
 -- Mock Data Inserts for Matthew Bones User Stories
 -- ===================================
-
--- GAMES
-INSERT INTO games (name) VALUES
-('Valorant');
 
 -- PROFILES (players)
 INSERT INTO profiles (username, isAdmin, isPublic, isPremium, password) 
@@ -69,25 +72,25 @@ VALUES
 -- GAME PROFILES (linking players to Valorant)
 INSERT INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) 
 VALUES
-(1, 111, 'MattBones', TRUE),
-(1, 222, 'JamppiTL', TRUE),
-(1, 333, 'NiveraTL', TRUE),
-(1, 444, 'SoulcasTL', TRUE),
-(1, 555, 'ScreaMTL', TRUE),
-(1, 666, 'AceRival', TRUE),
-(1, 777, 'ShadowRival', TRUE);
+(1, 2, 'MattBones', TRUE),
+(1, 3, 'JamppiTL', TRUE),
+(1, 4, 'NiveraTL', TRUE),
+(1, 5, 'SoulcasTL', TRUE),
+(1, 6, 'ScreaMTL', TRUE),
+(1, 7, 'AceRival', TRUE),
+(1, 8, 'ShadowRival', TRUE);
 
 -- PLAYER STATS
 INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, 
 totalHeadshots, totalShotsHit, totalWins) 
 VALUES
-(1, 180, 150, 40, 34500, 80, 520, 12),  -- MatthewBones
-(2, 250, 140, 60, 40000, 120, 680, 15), -- Jamppi
-(3, 220, 160, 55, 37000, 110, 640, 14), -- Nivera
-(4, 190, 170, 70, 35500, 90, 600, 13),  -- Soulcas
-(5, 300, 130, 50, 45000, 150, 720, 16), -- ScreaM
-(6, 200, 180, 45, 34000, 85, 580, 10),  -- OpponentAce
-(7, 210, 175, 48, 35000, 95, 590, 11);  -- OpponentShadow
+(2, 180, 150, 40, 34500, 80, 520, 12),  -- MatthewBones
+(3, 250, 140, 60, 40000, 120, 680, 15), -- Jamppi
+(4, 220, 160, 55, 37000, 110, 640, 14), -- Nivera
+(5, 190, 170, 70, 35500, 90, 600, 13),  -- Soulcas
+(6, 300, 130, 50, 45000, 150, 720, 16), -- ScreaM
+(7, 200, 180, 45, 34000, 85, 580, 10),  -- OpponentAce
+(8, 210, 175, 48, 35000, 95, 590, 11);  -- OpponentShadow
 
 -- WEAPONS
 INSERT INTO weapons (gameID, weaponType, name) VALUES
@@ -139,36 +142,33 @@ VALUES
 INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists,
 Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods)
 VALUES
-(1, 1, 20, 15, 5, 10, 75, 50, 35, 24, TRUE, 3800, 3), -- MatthewBones
-(1, 2, 25, 12, 7, 15, 80, 55, 35, 24, TRUE, 4200, 4), -- Jamppi
-(1, 6, 18, 16, 4, 8, 70, 45, 35, 24, FALSE, 3400, 2), -- OpponentAce
-(1, 7, 15, 18, 6, 7, 65, 42, 35, 24, FALSE, 3200, 1); -- OpponentShadow
+(2, 2, 20, 15, 5, 10, 75, 50, 35, 24, TRUE, 3800, 3), -- MatthewBones
+(2, 3, 25, 12, 7, 15, 80, 55, 35, 24, TRUE, 4200, 4), -- Jamppi
+(2, 7, 18, 16, 4, 8, 70, 45, 35, 24, FALSE, 3400, 2), -- OpponentAce
+(2, 8, 15, 18, 6, 7, 65, 42, 35, 24, FALSE, 3200, 1); -- OpponentShadow
 
 -- Match 2 (Bind)
 INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots,
  TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
  VALUES
-(2, 3, 22, 14, 6, 11, 78, 52, 34, 24, TRUE, 4000, 3), -- Nivera
-(2, 4, 18, 17, 8, 9, 70, 48, 34, 24, TRUE, 3600, 2), -- Soulcas
-(2, 6, 20, 15, 5, 10, 75, 50, 34, 24, FALSE, 3800, 3), -- OpponentAce
-(2, 7, 16, 18, 7, 8, 68, 46, 34, 24, FALSE, 3500, 2); -- OpponentShadow
+(3, 4, 22, 14, 6, 11, 78, 52, 34, 24, TRUE, 4000, 3), -- Nivera
+(3, 5, 18, 17, 8, 9, 70, 48, 34, 24, TRUE, 3600, 2), -- Soulcas
+(3, 7, 20, 15, 5, 10, 75, 50, 34, 24, FALSE, 3800, 3), -- OpponentAce
+(3, 8, 16, 18, 7, 8, 68, 46, 34, 24, FALSE, 3500, 2); -- OpponentShadow
 
 -- Match 3 (Haven)
 INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists,
  Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
  VALUES
-(3, 5, 30, 10, 4, 16, 85, 60, 33, 24, TRUE, 5000, 5), -- ScreaM
-(3, 1, 18, 16, 5, 9, 72, 48, 33, 24, TRUE, 3500, 2), -- MatthewBones
-(3, 6, 22, 14, 6, 12, 80, 54, 33, 24, FALSE, 4100, 4), -- OpponentAce
-(3, 7, 19, 15, 5, 10, 75, 50, 33, 24, FALSE, 3800, 3); -- OpponentShadow
+(4, 6, 30, 10, 4, 16, 85, 60, 33, 24, TRUE, 5000, 5), -- ScreaM
+(4, 2, 18, 16, 5, 9, 72, 48, 33, 24, TRUE, 3500, 2), -- MatthewBones
+(4, 7, 22, 14, 6, 12, 80, 54, 33, 24, FALSE, 4100, 4), -- OpponentAce
+(4, 8, 19, 15, 5, 10, 75, 50, 33, 24, FALSE, 3800, 3); -- OpponentShadow
 
 -- DATA FOR KAI NGUYEN/PERSONA 3 (VALORANT)
 -- ===================================
 -- Mock Data Inserts for Kai Nguyen User Stories
 -- ===================================
-INSERT IGNORE INTO games (gameID, name) VALUES
-(1, 'Valorant'),
-(2, 'CS2');
 
 INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
 ('KaiGhost', 0, 1, 1, 'test123');
@@ -188,12 +188,12 @@ VALUES
 
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots,shotsHit, matchDuration, rounds, win, damageDealt,firstBloods)
 VALUES
-(4, 8, 22, 15, 5, 12, 300, 129, 2100, 16, 1, 10370, 2); 
+(5, 8, 22, 15, 5, 12, 300, 129, 2100, 16, 1, 10370, 2); 
 
 INSERT INTO playerStats
 (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins)
 VALUES
-(8, 258, 191, 72, 33850, 132, 1082, 34);
+(9, 258, 191, 72, 33850, 132, 1082, 34);
 
 INSERT IGNORE INTO weaponStats
 (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought)
@@ -223,19 +223,14 @@ VALUES
 -- Mock Data Inserts for CSGO (First 5 Players)
 -- ===================================
 
--- GAMES (adding CSGO)
-INSERT INTO games (name) 
-VALUES
-('CSGO');
-
 -- GAME PROFILES for CSGO (gameID = 2)
 INSERT INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) 
 VALUES
-(2, 111, 'MattBones', TRUE),
-(2, 222, 'Jamppi', TRUE),
-(2, 333, 'Nivera', TRUE),
-(2, 444, 'Soulcas', TRUE),
-(2, 555, 'ScreaM', TRUE);
+(2, 1, 'MattBones', TRUE),
+(2, 2, 'Jamppi', TRUE),
+(2, 3, 'Nivera', TRUE),
+(2, 4, 'Soulcas', TRUE),
+(2, 5, 'ScreaM', TRUE);
 
 -- PLAYER STATS for CSGO
 INSERT INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, 
@@ -297,31 +292,31 @@ VALUES
 INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, 
 Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
 VALUES
-(4, 8, 23, 16, 6, 11, 80, 54, 38, 30, TRUE, 4200, 3), -- MatthewBonesCS
-(4, 9, 28, 14, 8, 15, 88, 60, 38, 30, TRUE, 4700, 4), -- JamppiCS
-(4, 10, 20, 18, 7, 10, 78, 52, 38, 30, FALSE, 4000, 3),-- NiveraCS
-(4, 11, 18, 20, 5, 9, 72, 48, 38, 30, FALSE, 3700, 2), -- SoulcasCS
-(4, 12, 30, 12, 4, 17, 92, 65, 38, 30, TRUE, 5200, 5); -- ScreaMCS
+(6, 8, 23, 16, 6, 11, 80, 54, 38, 30, TRUE, 4200, 3), -- MatthewBonesCS
+(6, 9, 28, 14, 8, 15, 88, 60, 38, 30, TRUE, 4700, 4), -- JamppiCS
+(6, 10, 20, 18, 7, 10, 78, 52, 38, 30, FALSE, 4000, 3),-- NiveraCS
+(6, 11, 18, 20, 5, 9, 72, 48, 38, 30, FALSE, 3700, 2), -- SoulcasCS
+(6, 12, 30, 12, 4, 17, 92, 65, 38, 30, TRUE, 5200, 5); -- ScreaMCS
 
 -- Match 2 (Mirage)
 INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, 
 TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
 VALUES
-(5, 8, 25, 15, 6, 12, 82, 56, 36, 30, TRUE, 4300, 3),
-(5, 9, 26, 14, 9, 14, 85, 58, 36, 30, TRUE, 4500, 4),
-(5, 10, 22, 17, 5, 11, 80, 54, 36, 30, FALSE, 4100, 3),
-(5, 11, 17, 19, 8, 8, 70, 46, 36, 30, FALSE, 3600, 2),
-(5, 12, 32, 11, 3, 18, 95, 68, 36, 30, TRUE, 5400, 5);
+(7, 8, 25, 15, 6, 12, 82, 56, 36, 30, TRUE, 4300, 3),
+(7, 9, 26, 14, 9, 14, 85, 58, 36, 30, TRUE, 4500, 4),
+(7, 10, 22, 17, 5, 11, 80, 54, 36, 30, FALSE, 4100, 3),
+(7, 11, 17, 19, 8, 8, 70, 46, 36, 30, FALSE, 3600, 2),
+(7, 12, 32, 11, 3, 18, 95, 68, 36, 30, TRUE, 5400, 5);
 
 -- Match 3 (Inferno)
 INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, 
 Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) 
 VALUES
-(6, 8, 19, 17, 7, 9, 75, 50, 37, 30, FALSE, 3800, 2),
-(6, 9, 24, 13, 10, 13, 83, 57, 37, 30, TRUE, 4400, 4),
-(6, 10, 21, 16, 6, 10, 79, 53, 37, 30, FALSE, 3950, 3),
-(6, 11, 16, 21, 9, 7, 68, 44, 37, 30, FALSE, 3500, 1),
-(6, 12, 28, 12, 4, 15, 90, 62, 37, 30, TRUE, 5000, 4);
+(8, 8, 19, 17, 7, 9, 75, 50, 37, 30, FALSE, 3800, 2),
+(8, 9, 24, 13, 10, 13, 83, 57, 37, 30, TRUE, 4400, 4),
+(8, 10, 21, 16, 6, 10, 79, 53, 37, 30, FALSE, 3950, 3),
+(8, 11, 16, 21, 9, 7, 68, 44, 37, 30, FALSE, 3500, 1),
+(8, 12, 28, 12, 4, 15, 90, 62, 37, 30, TRUE, 5000, 4);
 
 
 -- Valorant
@@ -340,19 +335,19 @@ INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) V
 
 -- GAME PROFILES (link to Valorant)
 INSERT IGNORE INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) VALUES
-(1, 10, 'TenZ', 1),    -- gameInstanceID 14
-(1, 11, 'Derke', 1),   -- gameInstanceID 15
-(1, 12, 'aspas', 1),   -- gameInstanceID 16
-(1, 13, 'Boaster', 1), -- gameInstanceID 17
-(1, 14, 'Leaf', 1);    -- gameInstanceID 18
+(1, 10, 'TenZ', 1),    -- gameInstanceID 13
+(1, 11, 'Derke', 1),   -- gameInstanceID 14
+(1, 12, 'aspas', 1),   -- gameInstanceID 15
+(1, 13, 'Boaster', 1), -- gameInstanceID 16
+(1, 14, 'Leaf', 1);    -- gameInstanceID 17
 
 -- PLAYER STATS (one row per Valorant player)
 INSERT IGNORE INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins) VALUES
-(14, 320, 210, 70, 54000, 165, 820, 18),  -- TenZ
-(15, 290, 200, 85, 50500, 150, 790, 17),  -- Derke
-(16, 340, 190, 60, 56000, 175, 840, 19),  -- aspas
-(17, 260, 230, 95, 48000, 130, 760, 15),  -- Boaster
-(18, 300, 210, 80, 52000, 155, 800, 16);  -- Leaf
+(13, 320, 210, 70, 54000, 165, 820, 18),  -- TenZ
+(14, 290, 200, 85, 50500, 150, 790, 17),  -- Derke
+(15, 340, 190, 60, 56000, 175, 840, 19),  -- aspas
+(16, 260, 230, 95, 48000, 130, 760, 15),  -- Boaster
+(17, 300, 210, 80, 52000, 155, 800, 16);  -- Leaf
 
 -- WEAPON STATS (use existing Valorant weaponIDs)
 INSERT IGNORE INTO weaponStats (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought) VALUES
@@ -381,36 +376,33 @@ INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank) VALU
 -- MATCH STATS
 -- Match 1 (Ascent)
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
-(7, 14, 25, 15, 6, 12, 82, 56, 36, 24, TRUE,  4300, 3), -- TenZ
-(7, 15, 28, 14, 9, 15, 88, 60, 36, 24, TRUE,  4700, 4), -- Derke
-(7, 16, 20, 18, 7, 10, 78, 52, 36, 24, FALSE, 4000, 3), -- aspas
-(7, 17, 18, 20, 5,  9, 72, 48, 36, 24, FALSE, 3700, 2), -- Boaster
-(7, 18, 30, 12, 4, 17, 92, 65, 36, 24, TRUE,  5200, 5); -- Leaf
+(9, 14, 25, 15, 6, 12, 82, 56, 36, 24, TRUE,  4300, 3), -- TenZ
+(9, 15, 28, 14, 9, 15, 88, 60, 36, 24, TRUE,  4700, 4), -- Derke
+(9, 16, 20, 18, 7, 10, 78, 52, 36, 24, FALSE, 4000, 3), -- aspas
+(9, 17, 18, 20, 5,  9, 72, 48, 36, 24, FALSE, 3700, 2), -- Boaster
+(9, 18, 30, 12, 4, 17, 92, 65, 36, 24, TRUE,  5200, 5); -- Leaf
 
 -- Match 2 (Bind)
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
-(8, 14, 27, 13, 8, 14, 85, 58, 36, 24, TRUE,  4500, 4),
-(8, 15, 26, 14, 9, 14, 85, 58, 36, 24, TRUE,  4500, 4),
-(8, 16, 22, 17, 5, 11, 80, 54, 36, 24, FALSE, 4100, 3),
-(8, 17, 17, 19, 8,  8, 70, 46, 36, 24, FALSE, 3600, 2),
-(8, 18, 32, 11, 3, 18, 95, 68, 36, 24, TRUE,  5400, 5);
+(10, 14, 27, 13, 8, 14, 85, 58, 36, 24, TRUE,  4500, 4),
+(10, 15, 26, 14, 9, 14, 85, 58, 36, 24, TRUE,  4500, 4),
+(10, 16, 22, 17, 5, 11, 80, 54, 36, 24, FALSE, 4100, 3),
+(10, 17, 17, 19, 8,  8, 70, 46, 36, 24, FALSE, 3600, 2),
+(10, 18, 32, 11, 3, 18, 95, 68, 36, 24, TRUE,  5400, 5);
 
 -- Match 3 (Haven)
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
-(9, 14, 19, 17, 7,  9, 75, 50, 37, 24, FALSE, 3800, 2),
-(9, 15, 24, 13,10, 13, 83, 57, 37, 24, TRUE,  4400, 4),
-(9, 16, 21, 16, 6, 10, 79, 53, 37, 24, FALSE, 3950, 3),
-(9, 17, 16, 21, 9,  7, 68, 44, 37, 24, FALSE, 3500, 1),
-(9, 18, 28, 12, 4, 15, 90, 62, 37, 24, TRUE,  5000, 4);
+(11, 14, 19, 17, 7,  9, 75, 50, 37, 24, FALSE, 3800, 2),
+(11, 15, 24, 13,10, 13, 83, 57, 37, 24, TRUE,  4400, 4),
+(11, 16, 21, 16, 6, 10, 79, 53, 37, 24, FALSE, 3950, 3),
+(11, 17, 16, 21, 9,  7, 68, 44, 37, 24, FALSE, 3500, 1),
+(11, 18, 28, 12, 4, 15, 90, 62, 37, 24, TRUE,  5000, 4);
 
 -- CS2
 
 -- ===================================
 -- Mock Data Inserts for CS2 (First 5 Players)
 -- ===================================
-
-INSERT IGNORE INTO games (gameID, name) VALUES
-(3, 'CS2');
 
 -- PROFILES (new CS2 players)  -- expected profileIDs: 15..19
 INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
@@ -422,11 +414,11 @@ INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) V
 
 -- BRIDGE: gamesProfiles (profile <-> CS2)  -- expected gameInstanceIDs: 19..23
 INSERT IGNORE INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) VALUES
-(3, 15, 's1mple', TRUE),
-(3, 16, 'ZywOo',  TRUE),
-(3, 17, 'NiKo',   TRUE),
-(3, 18, 'm0NESY', TRUE),
-(3, 19, 'ropz',   TRUE);
+(2, 6, 's1mple', TRUE),
+(2, 7, 'ZywOo',  TRUE),
+(2, 8, 'NiKo',   TRUE),
+(2, 9, 'm0NESY', TRUE),
+(2, 10, 'ropz',   TRUE);
 
 -- PLAYER STATS (one per gameInstanceID 19..23)
 INSERT IGNORE INTO playerStats (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins) VALUES
@@ -477,29 +469,29 @@ INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank) VALU
 (3, 9, '2025-08-15 19:00:00', 'Ranked', 'Global Elite');
 
 -- MATCH STATS (5 players across each of the 3 CS2 matches)
--- Match 1 (Ancient) matchID=10
+-- Match 1 (Ancient) matchID=12
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
-(10, 19, 27, 14, 6, 13, 86, 58, 36, 30, TRUE,  4600, 4),
-(10, 20, 25, 15, 7, 12, 84, 56, 36, 30, TRUE,  4400, 3),
-(10, 21, 22, 17, 5, 11, 80, 54, 36, 30, FALSE, 4100, 3),
-(10, 22, 18, 20, 8,  9, 72, 48, 36, 30, FALSE, 3600, 2),
-(10, 23, 30, 12, 4, 16, 92, 65, 36, 30, TRUE,  5200, 5);
+(12, 19, 27, 14, 6, 13, 86, 58, 36, 30, TRUE,  4600, 4),
+(12, 20, 25, 15, 7, 12, 84, 56, 36, 30, TRUE,  4400, 3),
+(12, 21, 22, 17, 5, 11, 80, 54, 36, 30, FALSE, 4100, 3),
+(12, 22, 18, 20, 8,  9, 72, 48, 36, 30, FALSE, 3600, 2),
+(12, 23, 30, 12, 4, 16, 92, 65, 36, 30, TRUE,  5200, 5);
 
--- Match 2 (Nuke) matchID=11
+-- Match 2 (Nuke) matchID=13
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
-(11, 19, 24, 15, 8, 12, 83, 57, 36, 30, TRUE,  4400, 3),
-(11, 20, 26, 14, 9, 14, 85, 58, 36, 30, TRUE,  4500, 4),
-(11, 21, 21, 16, 6, 10, 79, 53, 36, 30, FALSE, 3950, 3),
-(11, 22, 17, 19, 8,  8, 70, 46, 36, 30, FALSE, 3600, 2),
-(11, 23, 28, 12, 4, 15, 90, 62, 36, 30, TRUE,  5000, 4);
+(13, 19, 24, 15, 8, 12, 83, 57, 36, 30, TRUE,  4400, 3),
+(13, 20, 26, 14, 9, 14, 85, 58, 36, 30, TRUE,  4500, 4),
+(13, 21, 21, 16, 6, 10, 79, 53, 36, 30, FALSE, 3950, 3),
+(13, 22, 17, 19, 8,  8, 70, 46, 36, 30, FALSE, 3600, 2),
+(13, 23, 28, 12, 4, 15, 90, 62, 36, 30, TRUE,  5000, 4);
 
--- Match 3 (Overpass) matchID=12
+-- Match 3 (Overpass) matchID=14
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
-(12, 19, 20, 17, 7,  9, 75, 50, 37, 30, FALSE, 3800, 2),
-(12, 20, 24, 13,10, 13, 83, 57, 37, 30, TRUE,  4400, 4),
-(12, 21, 23, 16, 6, 11, 81, 55, 37, 30, FALSE, 4000, 3),
-(12, 22, 16, 21, 9,  7, 68, 44, 37, 30, FALSE, 3500, 1),
-(12, 23, 29, 12, 4, 16, 91, 64, 37, 30, TRUE,  5100, 4);
+(14, 19, 20, 17, 7,  9, 75, 50, 37, 30, FALSE, 3800, 2),
+(14, 20, 24, 13,10, 13, 83, 57, 37, 30, TRUE,  4400, 4),
+(14, 21, 23, 16, 6, 11, 81, 55, 37, 30, FALSE, 4000, 3),
+(14, 22, 16, 21, 9,  7, 68, 44, 37, 30, FALSE, 3500, 1),
+(14, 23, 29, 12, 4, 16, 91, 64, 37, 30, TRUE,  5100, 4);
 
 -- DATA FOR JORDAN LEE/PERSONA 4
 -- ===================================
@@ -509,10 +501,10 @@ INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, 
 -- ====== BASE TABLES ======
 -- PROFILES (role management via isAdmin/isPremium/isPublic)
 INSERT INTO profiles (profileID, username, isAdmin, isPublic, isPremium, password) VALUES
-  (1, 'jordan_lee', 1, 1, 1, 'hashed_pw_jordan'), -- admin, public, premium
-  (2, 'mod_kim',     1, 1, 0, 'hashed_pw_kim'), -- admin, public
-  (3, 'analyst_ryu', 0, 1, 0, 'hashed_pw_ryu'), -- public
-  (4, 'viewer_amy',  0, 1, 0, 'hashed_pw_amy'); -- public
+  (91, 'jordan_lee', 1, 1, 1, 'hashed_pw_jordan'), -- admin, public, premium
+  (92, 'mod_kim',     1, 1, 0, 'hashed_pw_kim'), -- admin, public
+  (93, 'analyst_ryu', 0, 1, 0, 'hashed_pw_ryu'), -- public
+  (94, 'viewer_amy',  0, 1, 0, 'hashed_pw_amy'); -- public
 
 -- GAMES 
 INSERT INTO games (gameID, name) VALUES
@@ -561,16 +553,14 @@ INSERT INTO matches (matchID, gameID, mapID, matchDate, matchType, lobbyRank) VA
   (5201, 12, 120, '2024-11-20 13:10:00', 'quickplay', 'Unrated');
 INSERT INTO matchStats (matchStatsID, matchID, gameInstanceID, kills, deaths, assists, headshots, totalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
   (9201, 5201, 1002, 30, 20, 18, 0, 500, 250, 1800, 1, 1, 6400, 0);
-INSERT INTO matchStats (matchStatsID, matchID, gameInstanceID, kills, deaths, assists, headshots, totalShots, shotsHit, matchDuration, rounds, win, damageDealt, firstBloods) VALUES
-  (9901, 5901, 3000, 4, 3, 1, 1, 90, 35, 1500, 1, 0, 620, 0);
 
--- ====== COMMUNITY INTEREST PROXY ======
--- Use goals as "content ideas" tied to games to infer interest from community.
-INSERT INTO goals (goalsID, gameID, dateCreated, description) VALUES
-  (7001, 10, '2024-12-01 10:00:00', 'Improve at Apex rotation'),
-  (7002, 11, '2024-12-28 10:00:00', 'Learn Valorant Ascent execute'),
+-- -- ====== COMMUNITY INTEREST PROXY ======
+-- -- Use goals as "content ideas" tied to games to infer interest from community.
+-- INSERT INTO goals (goalsID, gameID, dateCreated, description) VALUES
+--   (7001, 10, '2024-12-01 10:00:00', 'Improve at Apex rotation'),
+--   (7002, 11, '2024-12-28 10:00:00', 'Learn Valorant Ascent execute')
 
--- Milestones can reflect content progress or KPIs (view targets)
-INSERT INTO milestones (milestoneID, profileID, goalID) VALUES
-  (8001, 1, 7001),
-  (8002, 1, 7002),
+-- -- Milestones can reflect content progress or KPIs (view targets)
+-- INSERT INTO milestones (milestoneID, profileID, goalID) VALUES
+--   (8001, 1, 7001),
+--   (8002, 1, 7002)
