@@ -34,11 +34,11 @@ SideBarLinks(show_home=True)
 
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading the Home page of the app")
-st.title('CS 3200 Project Template')
+st.title('CS 3200 Project: Omni.gg')
 st.write('\n\n')
 # st.write('### Overview:')
 # st.write('\n')
-st.write('#### HI! As which user would you like to log in?')
+st.write('#### Hi! As which user would you like to log in?')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user 
@@ -59,7 +59,7 @@ if st.button("Act as John, a Political Strategy Advisor",
     logger.info("Logging in as Political Strategy Advisor Persona")
     st.switch_page('pages/00_Pol_Strat_Home.py')
 
-if st.button('Act as Matthew Bones, an data analyst for Team Liquid', 
+if st.button('Act as Matthew Bones, a Data Analyst for Team Liquid', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
