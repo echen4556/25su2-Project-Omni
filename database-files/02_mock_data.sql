@@ -37,10 +37,10 @@ VALUES
 (2, 2, 1.000,  42, 0.430,  32);
 
 INSERT IGNORE INTO mapStats
-(statTableID, gameID, weaponType, name)
+(statTableID, mapID, kills, wins, losses)
 VALUES
-(1, 1, 'Rifle',  'Ascent'),
-(1, 1, 'Sniper', 'Bind');
+(1, 1, 23, 3, 5),
+(1, 2, 21, 4, 3);
 
 INSERT IGNORE INTO goals
 (gameID, dateCreated, dateAchieved, description)
