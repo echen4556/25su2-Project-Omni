@@ -67,7 +67,7 @@ if st.button('Act as Matthew Bones, a Data Analyst for Team Liquid',
     st.session_state['username'] = 'Matthew'
     st.switch_page('pages/05_Matthew_Bones_home.py')
 
-if st.button('Act as System Administrator', 
+if st.button('Act as Jordan lee, the System Administrator', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
