@@ -27,6 +27,24 @@ def MilestonesAndGoalsNav():
     )
 
 
+def EmmaSmithNav():
+    st.sidebar.page_link(
+        "03_Emma_Smith_home", label="Casual Gamer Home", icon="👤"
+    )
+
+
+def KaiNguyenNav():
+    st.sidebar.page_link(
+        "pages/04_Kai_Nguyen_home.py", label="Pro Gamer Home", icon="👤"
+    )
+
+
+def JordanLeeNav():
+    st.sidebar.page_link(
+        "pages/17_Jordan_Lee_home.py", label="System Administrator Home", icon="👤"
+    )
+
+
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
 def ApiTestNav():
