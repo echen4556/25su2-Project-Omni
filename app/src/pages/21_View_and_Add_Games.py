@@ -23,4 +23,4 @@ games = []
 st.table(games)
 
 if st.button("⬅ Back to Admin Home"):
-    st.switch_page("pages/20_Admin_Home.py")
+    st.switch_page("pages/17_Jordan_Lee_home.py")
