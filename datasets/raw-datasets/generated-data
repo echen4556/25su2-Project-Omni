@@ -1,4 +1,4 @@
-USE `OmniDatabase`;
+/* USE `OmniDatabase`;
 
 -- List of games
 INSERT INTO games (gameID, name)
@@ -168,4 +168,4 @@ VALUES
 (37, 26, 9),
 (38, 27, 2),
 (39, 28, 8),
-(40, 21, 7);
+(40, 21, 7); */
