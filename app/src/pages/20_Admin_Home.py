@@ -16,6 +16,11 @@ if st.button('Add Games',
              use_container_width=True):
   st.switch_page('pages/21_View_and_Add_Games.py')
 
+if st.button('Search Player', 
+            type='primary',
+            use_container_width=True):
+  st.switch_page('pages/22_Admin_Player_Search.py')
+
 
 if st.button("⬅ Back to Home"):
     st.switch_page("Home.py")
