@@ -12,6 +12,8 @@ if 'username' not in st.session_state or 'profileID' not in st.session_state:
     st.error("Please log in to continue.")
     st.stop()
 
+API_BASE_URL = "http://web-api:4000"
+
 is_premium = st.session_state.get('isPremium', True)
 username = st.session_state['username']
 profile_id = st.session_state['profileID']
@@ -20,15 +22,14 @@ profile_id = st.session_state['profileID']
 def get_user_games(profile_id):
     """Fetches all games associated with a user's profile."""
     try:
-        # REPLACE WITH DB CALL
-        return [
-            {'gameID': 1, 'name': 'Valorant'},
-            {'gameID': 2, 'name': 'Counter-Strike 2'}
-        ]
+        response = requests.get(f"{API_BASE_URL}/games/profile/{profile_id}")
+        response.raise_for_status()
+        return response.json()  # Assuming backend returns a list of dicts like [{'gameID': 1, 'name': 'Valorant'}, ...]
     except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching games: {e}")
         st.error(f"Error fetching games: {e}")
         return []
-
+    
 # Show sidebar links for the current user
 SideBarLinks()
 

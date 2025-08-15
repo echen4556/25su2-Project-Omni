@@ -29,7 +29,6 @@ def get_milestones(profile_id):
         return r.json()
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching milestones: {e}")
-        st.error("Failed to fetch milestones. Check your backend API.")
         return []
 
 @st.cache_data
@@ -41,7 +40,6 @@ def get_goals(profile_id):
         return r.json()
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching goals: {e}")
-        st.error("Failed to fetch goals. Check your backend API.")
         return []
 
 # ----------------- Page Content -----------------
@@ -52,11 +50,6 @@ st.write("")
 # ----------------- Milestones -----------------
 st.subheader("🏆 Milestones")
 milestones = get_milestones(profile_id)
-
-if milestones:
-    st.table(milestones)
-else:
-    st.info("No milestones found for your profile.")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -71,11 +64,6 @@ st.write("---")  # Separator
 # ----------------- Goals -----------------
 st.subheader("🎯 Goals")
 goals = get_goals(profile_id)
-
-if goals:
-    st.table(goals)
-else:
-    st.info("No goals found for your profile.")
 
 col1, col2 = st.columns(2)
 with col1:
