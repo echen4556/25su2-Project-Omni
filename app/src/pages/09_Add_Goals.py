@@ -2,7 +2,7 @@ import logging
 import streamlit as st
 import requests
 from modules.nav import SideBarLinks
-from datetime import date
+from datetime import date, datetime
 
 logger = logging.getLogger(__name__)
 st.set_page_config(layout='wide')
@@ -29,9 +29,11 @@ status = st.selectbox("Status", ["Planned", "In Progress", "Completed"])
 if st.button("Save Goal", type="primary"):
     # Call the backend API to create the goal
     payload = {
-    "description": title,   # previously "name"
-    "gameID": 1             # choose a valid gameID
-}
+        "description": title,   # previously "name"
+        "gameID": 2,            # choose a valid gameID
+        "profileID": 1,          # must match a valid profileID in your database
+        "date": datetime.now().isoformat() 
+    }
     try:
         response = requests.post(f"{API_BASE_URL}/goals", json=payload)
         response.raise_for_status()

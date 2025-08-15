@@ -17,7 +17,7 @@ def AboutPageNav():
 #### ------------------------ Examples for Role ------------------------
 def MatthewBonesNav():
     st.sidebar.page_link(
-        "pages/05_Matthew_Bones_home.py", label="Data Analyst Home", icon="👤"
+        "pages/05_Matthew_Bones_home.py", label="Premium Home", icon="👤"
     )
 
 

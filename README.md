@@ -75,3 +75,20 @@ The code in this project demonstrates how to implement a simple Role-based Acces
 - **Pro Gamer**: Can view player stats, weapon analytics, mapp insights, and can compare their stats with others to view and evaluate their performance
 
 - **System Administrator**: Can manage roles, view the performance of users, and see anomalies to review data glitches or potential cheaters
+
+
+## Planned Features
+### Goals and Milestones
+The "Goals and Milestones" feature is designed to be a part of the application, allowing users to define, track, and manage key objectives.
+
+**Current Status:**
+Due to initial project time constraints, the core functionality for managing goals and milestones is not yet fully implemented. Users are currently able to view goals and milestones, but the interactive ability to modify them is unavailable.
+
+**Planned Features:**
+- **Editing and Deletion:** Users will have full control to **edit** and **remove** goals and milestones after they have been created.
+- **Progress Tracking:** Future updates will include a more robust system for tracking and visualizing the progress of each goal.
+- **Intuitive UI:** An interactive user interface will be developed to make the process of creating and managing goals and milestones seamless and efficient.
+
+
+
+

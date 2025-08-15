@@ -5,13 +5,13 @@ from datetime import datetime
 
 goals_bp = Blueprint('goals', __name__)
 
-# ------------------------ GET all goals for a game ------------------------
-@goals_bp.route('/goals/game/<int:gameID>', methods=['GET'])
-def get_goals(gameID):
-    current_app.logger.info(f'GET /goals/game/{gameID}')
+# ------------------------ GET all goals for a player ------------------------
+@goals_bp.route('/goals/profile/<int:profileID>', methods=['GET'])
+def get_goals_for_profile(profileID):
+    current_app.logger.info(f'GET /goals/profile/{profileID}')
     conn = db.get_db()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute('SELECT * FROM goals WHERE gameID = %s ORDER BY goalsID', (gameID,))
+    cursor.execute('SELECT * FROM goals WHERE profileID = %s ORDER BY goalsID', (profileID,))
     data = cursor.fetchall()
     return jsonify(data), 200
 
@@ -35,16 +35,17 @@ def create_goal():
     info = request.json
     description = info.get('description')
     gameID = info.get('gameID')
+    profileID = info.get('profileID')
 
-    if not description or not gameID:
-        return jsonify({"error": "Missing description or gameID"}), 400
+    if not description or not gameID or not profileID:
+        return jsonify({"error": "Missing description, gameID, or profileID"}), 400
 
     dateCreated = datetime.now()
     conn = db.get_db()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO goals (gameID, dateCreated, description) VALUES (%s, %s, %s)',
-        (gameID, dateCreated, description)
+        'INSERT INTO goals (gameID, profileID, dateCreated, description) VALUES (%s, %s, %s, %s)',
+        (gameID, profileID, dateCreated, description)
     )
     conn.commit()
     return jsonify({"message": "Goal created!"}), 201

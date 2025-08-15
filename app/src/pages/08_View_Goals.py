@@ -25,7 +25,6 @@ def get_goals(profile_id):
         return response.json()
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching goals: {e}")
-        st.error(f"Failed to retrieve goals: {e}")
         return []
 
 st.title("🎯 View Goals")

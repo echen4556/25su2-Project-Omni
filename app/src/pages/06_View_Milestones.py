@@ -11,11 +11,11 @@ st.set_page_config(layout='wide')
 SideBarLinks()
 
 # Ensure user is logged in
-if 'profile_id' not in st.session_state:
-    st.error("Please log in first.")
+if 'username' not in st.session_state or 'profileID' not in st.session_state:
+    st.error("Please log in to continue.")
     st.stop()
 
-profile_id = st.session_state["profile_id"]
+profile_id = st.session_state['profileID']
 
 st.title("🏆 View Milestones")
 st.write("Here are your tracked milestones:")
