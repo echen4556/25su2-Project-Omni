@@ -7,7 +7,7 @@ from modules.nav import SideBarLinks # Assuming this is your navigation module
 # --- Configuration ---
 st.set_page_config(layout="wide")
 logger = logging.getLogger(__name__)
-API_BASE_URL = "http://host.docker.internal:4000" 
+API_BASE_URL = "http://api:4000"
 
 # --- Page Setup ---
 # Show sidebar links from your navigation module
@@ -49,7 +49,6 @@ def get_summary_stats(profile_id, game_id):
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
-        st.write(f"Error fetching stats: {e}")
         return None # Return None if stats don't exist (404) or other error
 
 @st.cache_data
@@ -82,6 +81,35 @@ def get_all_map_stats(profile_id, game_id):
         st.error(f"Error fetching map stats: {e}")
         return pd.DataFrame()
 
+@st.cache_data
+def get_all_weapon_stats(profile_id, game_id):
+    """Fetches all weapon stats for a player in a game."""
+    try:
+        # This now makes a live API call
+        response = requests.get(f"{API_BASE_URL}/playerstats/weapon/{profile_id}/{game_id}")
+        response.raise_for_status()
+        weapon_stats_data = response.json()
+        # Convert the JSON response to a pandas DataFrame
+        return pd.DataFrame(weapon_stats_data)
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching weapon stats: {e}")
+        return pd.DataFrame()
+
+@st.cache_data
+def get_all_map_stats(profile_id, game_id):
+    """Fetches all map stats for a player in a game."""
+    try:
+        # This now makes a live API call
+        response = requests.get(f"{API_BASE_URL}/playerstats/map/{profile_id}/{game_id}")
+        response.raise_for_status()
+        map_stats_data = response.json()
+        # Convert the JSON response to a pandas DataFrame
+        return pd.DataFrame(map_stats_data)
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching map stats: {e}")
+        return pd.DataFrame()
+
+
 # --- UI Display ---
 
 # Fetch all data for the selected game
@@ -111,12 +139,16 @@ else:
         st.subheader("Weapon Performance")
         if is_premium:
             if not weapon_stats_df.empty:
-                sorted_weapons = weapon_stats_df.sort_values(by="totalUsageTime", ascending=False)
-                for index, row in sorted_weapons.iterrows():
-                    with st.expander(f"**{row['name']}**"):
-                        st.metric("Kills with Weapon", row['kills'])
-                        st.metric("Accuracy", f"{row['accuracy']:.1%}")
-                        st.metric("Total Usage (Hours)", f"{row['totalUsageTime']:.2f}")
+                # Ensure the necessary columns exist before trying to sort or display
+                if 'totalUsageTime' in weapon_stats_df.columns:
+                    sorted_weapons = weapon_stats_df.sort_values(by="totalUsageTime", ascending=False)
+                    for index, row in sorted_weapons.iterrows():
+                        with st.expander(f"**{row.get('name', 'Unknown Weapon')}**"):
+                            st.metric("Kills with Weapon", row.get('kills', 0))
+                            st.metric("Accuracy", f"{row.get('accuracy', 0):.1%}")
+                            st.metric("Total Usage (Hours)", f"{row.get('totalUsageTime', 0):.2f}")
+                else:
+                    st.info("Weapon stats data is missing required columns.")
             else:
                 st.info("No weapon stats available.")
         else:
@@ -128,17 +160,25 @@ else:
         st.subheader("Map Performance")
         if is_premium:
             if not map_stats_df.empty:
-                map_stats_df['totalMatches'] = map_stats_df['wins'] + map_stats_df['losses']
-                sorted_maps = map_stats_df.sort_values(by="totalMatches", ascending=False)
-                for index, row in sorted_maps.iterrows():
-                    with st.expander(f"**{row['name']}**"):
-                        win_rate = row['wins'] / max(1, row['totalMatches'])
-                        st.metric("Win Rate", f"{win_rate:.1%}")
-                        st.metric("Total Wins", row['wins'])
-                        st.metric("Total Losses", row['losses'])
+                # Ensure the necessary columns exist before calculations
+                if 'wins' in map_stats_df.columns and 'losses' in map_stats_df.columns:
+                    map_stats_df['totalMatches'] = map_stats_df['wins'] + map_stats_df['losses']
+                    sorted_maps = map_stats_df.sort_values(by="totalMatches", ascending=False)
+                    for index, row in sorted_maps.iterrows():
+                        with st.expander(f"**{row.get('name', 'Unknown Map')}**"):
+                            win_rate = row['wins'] / max(1, row['totalMatches'])
+                            st.metric("Win Rate", f"{win_rate:.1%}")
+                            st.metric("Total Wins", row.get('wins', 0))
+                            st.metric("Total Losses", row.get('losses', 0))
+                else:
+                    st.info("Map stats data is missing required columns.")
             else:
                 st.info("No map stats available.")
         else:
             st.info("Upgrade to Premium to unlock detailed map stats.")
             if st.button("💎 Upgrade Now", key="map_upgrade", use_container_width=True):
                 st.switch_page("pages/34_Premium_Upgrade.py")
+
+if st.button("⬅️ Back to Profile", use_container_width=True):
+    # This assumes the homepage path was stored in session_state during login
+    st.switch_page('pages/03_Emma_Smith_home.py')
