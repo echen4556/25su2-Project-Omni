@@ -1,29 +1,53 @@
 import streamlit as st
+import requests
+
+API_BASE_URL = 'http://api:4000' 
 
 # -------------------------------
-# Mock data (replace with DB later)
+# Helper functions
 # -------------------------------
-games = [
-    {"gameID": 1, "name": "Valorant"},
-    {"gameID": 2, "name": "Counter-Strike 2"},
-    {"gameID": 3, "name": "Heretic"},
-]
+def get_user_games(profile_id):
+    try:
+        response = requests.get(f"{API_BASE_URL}/profiles/{profile_id}/games")
+        response.raise_for_status()
+        return response.json()  # List of games
+    except requests.exceptions.RequestException:
+        st.error("Failed to fetch games from backend API.")
+        return []
 
-players = [
-    {"profileID": 1, "username": "Emma", "isPremium": True},
-    {"profileID": 2, "username": "Matthew", "isPremium": False},
-    {"profileID": 3, "username": "Alice", "isPremium": True},
-    {"profileID": 4, "username": "Bob", "isPremium": False},
-]
-
-game_options = {game['name']: game['gameID'] for game in games}
-player_options = {player['username']: (player['profileID'], player['isPremium']) for player in players}
+def get_all_players():
+    try:
+        response = requests.get(f"{API_BASE_URL}/profiles")
+        response.raise_for_status()
+        return response.json()  # List of players with profileID, username, isPremium
+    except requests.exceptions.RequestException:
+        st.error("Failed to fetch players from backend API.")
+        return []
 
 # -------------------------------
 # Page layout
 # -------------------------------
 st.title("Select Players and Game to Compare")
 st.write("Choose two players and a game to compare stats.")
+
+# -------------------------------
+# Fetch data from API
+# -------------------------------
+# Assuming a logged-in user with profile_id in session_state
+if 'profile_id' not in st.session_state:
+    st.error("You must be logged in to view this page.")
+    st.stop()
+
+profile_id = st.session_state['profile_id']
+
+games = get_user_games(profile_id)
+players = get_all_players()
+
+if not games or not players:
+    st.stop()
+
+game_options = {game['game_name']: game['game_id'] for game in games}
+player_options = {player['username']: (player['profileID'], player['isPremium']) for player in players}
 
 # -------------------------------
 # User selections
@@ -55,5 +79,4 @@ if st.button("Compare Players"):
             'show_maps_weapons': player1_premium and player2_premium
         }
         # Switch to Page 33
-        st.switch_page("pages/33_Compare_Players.py")
-
+        st.switch_page("33_Compare_Players")
