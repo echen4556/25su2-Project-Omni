@@ -131,10 +131,12 @@ DROP TABLE IF EXISTS `goals`;
 CREATE TABLE `goals` (
    goalsID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
    gameID INT NOT NULL,
+   profileID INT NOT NULL,
    dateCreated DATETIME NOT NULL,
    dateAchieved DATETIME,
    description VARCHAR(100),
-   FOREIGN KEY (gameID) REFERENCES games(`gameID`)
+   FOREIGN KEY (gameID) REFERENCES games(gameID),
+   FOREIGN KEY (profileID) REFERENCES profiles(profileID)
 );
 
 

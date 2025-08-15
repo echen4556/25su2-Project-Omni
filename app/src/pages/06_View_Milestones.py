@@ -1,58 +1,39 @@
 import logging
-logger = logging.getLogger(__name__)
-
 import streamlit as st
 import requests
+import pandas as pd
 from modules.nav import SideBarLinks
 
-# Page setup
-st.set_page_config(layout='wide')
+logger = logging.getLogger(__name__)
+API_BASE_URL = "http://host.docker.internal:4000" 
 
-# Show sidebar
+st.set_page_config(layout='wide')
 SideBarLinks()
 
-# Make sure the user is logged in
-if 'username' not in st.session_state or 'profileID' not in st.session_state:
-    st.error("Please log in to continue.")
+# Ensure user is logged in
+if 'profile_id' not in st.session_state:
+    st.error("Please log in first.")
     st.stop()
 
-username = st.session_state['username']
-profile_id = st.session_state['profileID']
+profile_id = st.session_state["profile_id"]
 
-@st.cache_data
-def get_user_milestones(profile_id):
-    """Fetch milestones for the given profile ID."""
-    try:
-        # TODO: Replace with actual API endpoint
-        resp = requests.get(f"http://web-api:4000/milestones/profile/{profile_id}")
-        resp.raise_for_status()
-        return resp.json()
-    except requests.exceptions.HTTPError as http_err:
-        if resp.status_code == 404:
-            st.warning("No milestones found for this profile. Showing example data.")
-            return [
-                {"id": 1, "name": "First Win", "date": "2025-08-01"},
-                {"id": 2, "name": "100 Kills", "date": "2025-08-05"}
-            ]
-        st.error(f"Error fetching milestones: {http_err}")
-        return []
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching milestones: {e}")
-        return []
-
-# Title
 st.title("🏆 View Milestones")
-st.write(f"Here are your tracked milestones for {username}:")
+st.write("Here are your tracked milestones:")
 
-# Fetch milestones
-milestones_list = get_user_milestones(profile_id)
+# Fetch milestones from API
+try:
+    r = requests.get(f"{API_BASE_URL}/milestones/profile/{profile_id}")
+    r.raise_for_status()
+    milestones = r.json()
+except requests.exceptions.RequestException as e:
+    st.error(f"Error fetching milestones: {e}")
+    milestones = []
 
-if milestones_list:
-    st.table(milestones_list)
+if milestones:
+    df = pd.DataFrame(milestones)
+    st.table(df)
 else:
-    st.info("You don't have any milestones yet.")
+    st.info("You have no milestones yet.")
 
-st.divider()
-
-if st.button("⬅ Back to Home", use_container_width=True):
+if st.button("⬅ Back to Home"):
     st.switch_page("Home.py")

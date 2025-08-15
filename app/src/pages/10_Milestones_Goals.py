@@ -2,46 +2,85 @@ import logging
 logger = logging.getLogger(__name__)
 
 import streamlit as st
+import requests
 from modules.nav import SideBarLinks
 
-# Page layout setup
+# ----------------- Page Setup -----------------
 st.set_page_config(layout='wide')
-
-# Show sidebar links for the current user
 SideBarLinks()
 
-# Title
-st.title(f"Your Milestones and Goals:")
-st.write('')
-st.write('Track your progress with milestones and set actionable goals to stay on top of your performance.')
-st.write('')
+# ----------------- Authentication Check -----------------
+if 'profileID' not in st.session_state or 'username' not in st.session_state:
+    st.error("Please log in first.")
+    st.stop()
 
-# Milestones Section
+profile_id = st.session_state['profileID']
+username = st.session_state['username']
+
+# ----------------- API Setup -----------------
+API_BASE_URL = "http://host.docker.internal:4000"   # adjust if needed
+
+@st.cache_data
+def get_milestones(profile_id):
+    """Fetch milestones for the given profile from the API."""
+    try:
+        r = requests.get(f"{API_BASE_URL}/milestones/profile/{profile_id}")
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching milestones: {e}")
+        st.error("Failed to fetch milestones. Check your backend API.")
+        return []
+
+@st.cache_data
+def get_goals(profile_id):
+    """Fetch goals for the given profile from the API."""
+    try:
+        r = requests.get(f"{API_BASE_URL}/goals/profile/{profile_id}")
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching goals: {e}")
+        st.error("Failed to fetch goals. Check your backend API.")
+        return []
+
+# ----------------- Page Content -----------------
+st.title(f"{username}'s Milestones & Goals")
+st.write("Track your achievements and set actionable objectives to improve performance.")
+st.write("")
+
+# ----------------- Milestones -----------------
 st.subheader("🏆 Milestones")
-st.write("View and manage your key achievements and completed objectives.")
+milestones = get_milestones(profile_id)
 
-if st.button('🎯 View All Milestones',
-             type='primary',
-             use_container_width=True):
-    st.switch_page('pages/06_View_Milestones.py')
+if milestones:
+    st.table(milestones)
+else:
+    st.info("No milestones found for your profile.")
 
-if st.button('➕ Add New Milestone',
-             type='secondary',
-             use_container_width=True):
-    st.switch_page('pages/07_Add_Milestones.py')
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("🎯 View All Milestones"):
+        st.switch_page("pages/06_View_Milestones.py")
+with col2:
+    if st.button("➕ Add New Milestone"):
+        st.switch_page("pages/07_Add_Milestones.py")
 
-st.write('---')  # Separator line
+st.write("---")  # Separator
 
-# Goals Section
+# ----------------- Goals -----------------
 st.subheader("🎯 Goals")
-st.write("Plan your next objectives and track progress toward achieving them.")
+goals = get_goals(profile_id)
 
-if st.button('📋 View Current Goals',
-             type='primary',
-             use_container_width=True):
-    st.switch_page('pages/08_View_Goals.py')
+if goals:
+    st.table(goals)
+else:
+    st.info("No goals found for your profile.")
 
-if st.button('➕ Set New Goal',
-             type='secondary',
-             use_container_width=True):
-    st.switch_page('pages/09_Add_Goals.py')
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("📋 View Current Goals"):
+        st.switch_page("pages/08_View_Goals.py")
+with col2:
+    if st.button("➕ Set New Goal"):
+        st.switch_page("pages/09_Add_Goals.py")

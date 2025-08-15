@@ -1,57 +1,80 @@
-from flask import Blueprint, request, jsonify, make_response, current_app
+from flask import Blueprint, request, jsonify, current_app
 from backend.db_connection import db
+import pymysql.cursors
+from datetime import datetime
 
-goals = Blueprint('goals', __name__)
+goals_bp = Blueprint('goals', __name__)
 
-# GET all goals
-@goals.route('/goals/<int:profileID>', methods=['GET'])
-def get_goals():
-    current_app.logger.info(f'GET /goals/{profileID}')
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT * FROM goals ORDER BY goalsID')
+# ------------------------ GET all goals for a game ------------------------
+@goals_bp.route('/goals/game/<int:gameID>', methods=['GET'])
+def get_goals(gameID):
+    current_app.logger.info(f'GET /goals/game/{gameID}')
+    conn = db.get_db()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute('SELECT * FROM goals WHERE gameID = %s ORDER BY goalsID', (gameID,))
     data = cursor.fetchall()
-    response = make_response(jsonify(data))
-    response.status_code = 200
-    return response
+    return jsonify(data), 200
 
-# GET one goal
-@goals.route('/goal/<goalsID>', methods=['GET'])
-def get_game(goalsID):
-    current_app.logger.info(f'GET /game/{goalsID}')
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT * FROM goals WHERE goalsID = %s', (goalsID,))
-    data = cursor.fetchall()
-    response = make_response(jsonify(data))
-    response.status_code = 200
-    return response
+# ------------------------ GET one goal by ID ------------------------
+@goals_bp.route('/goals/<int:goalID>', methods=['GET'])
+def get_goal(goalID):
+    current_app.logger.info(f'GET /goals/{goalID}')
+    conn = db.get_db()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute('SELECT * FROM goals WHERE goalsID = %s', (goalID,))
+    data = cursor.fetchone()
+    if data:
+        return jsonify(data), 200
+    else:
+        return jsonify({"error": "Goal not found"}), 404
 
-# POST create a game
-@goals.route('/goals', methods=['POST'])
-def create_game():
+# ------------------------ POST create a new goal ------------------------
+@goals_bp.route('/goals', methods=['POST'])
+def create_goal():
     current_app.logger.info('POST /goals')
     info = request.json
-    name = info.get('name')
-    cursor = db.get_db().cursor()
-    cursor.execute('INSERT INTO goals (name) VALUES (%s)', (name,))
-    db.get_db().commit()
-    return 'Game created!', 201
+    description = info.get('description')
+    gameID = info.get('gameID')
 
-# PUT update a game
-@goals.route('/game/<goalsID>', methods=['PUT'])
-def update_game(goalsID):
-    current_app.logger.info(f'PUT /game/{goalsID}')
+    if not description or not gameID:
+        return jsonify({"error": "Missing description or gameID"}), 400
+
+    dateCreated = datetime.now()
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        'INSERT INTO goals (gameID, dateCreated, description) VALUES (%s, %s, %s)',
+        (gameID, dateCreated, description)
+    )
+    conn.commit()
+    return jsonify({"message": "Goal created!"}), 201
+
+# ------------------------ PUT update a goal ------------------------
+@goals_bp.route('/goals/<int:goalID>', methods=['PUT'])
+def update_goal(goalID):
+    current_app.logger.info(f'PUT /goals/{goalID}')
     info = request.json
-    name = info.get('name')
-    cursor = db.get_db().cursor()
-    cursor.execute('UPDATE goals SET name = %s WHERE goalsID = %s', (name, goalsID))
-    db.get_db().commit()
-    return 'Game updated!', 200
+    description = info.get('description')
+    dateAchieved = info.get('dateAchieved')  # optional
 
-# DELETE a game
-@goals.route('/game/<goalsID>', methods=['DELETE'])
-def delete_game(goalsID):
-    current_app.logger.info(f'DELETE /game/{goalsID}')
-    cursor = db.get_db().cursor()
-    cursor.execute('DELETE FROM goals WHERE goalsID = %s', (goalsID,))
-    db.get_db().commit()
-    return 'Game deleted!', 200
+    if not description:
+        return jsonify({"error": "Missing description"}), 400
+
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        'UPDATE goals SET description = %s, dateAchieved = %s WHERE goalsID = %s',
+        (description, dateAchieved, goalID)
+    )
+    conn.commit()
+    return jsonify({"message": "Goal updated!"}), 200
+
+# ------------------------ DELETE a goal ------------------------
+@goals_bp.route('/goals/<int:goalID>', methods=['DELETE'])
+def delete_goal(goalID):
+    current_app.logger.info(f'DELETE /goals/{goalID}')
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM goals WHERE goalsID = %s', (goalID,))
+    conn.commit()
+    return jsonify({"message": "Goal deleted!"}), 200

@@ -1,58 +1,46 @@
 import logging
-logger = logging.getLogger(__name__)
-
 import streamlit as st
 import requests
+import pandas as pd
 from modules.nav import SideBarLinks
 
-# Page setup
+logger = logging.getLogger(__name__)
 st.set_page_config(layout='wide')
 
-# Show sidebar
+API_BASE_URL = "http://host.docker.internal:4000" 
 SideBarLinks()
 
-# Make sure the user is logged in
+# Ensure user is logged in
 if 'username' not in st.session_state or 'profileID' not in st.session_state:
     st.error("Please log in to continue.")
     st.stop()
 
-username = st.session_state['username']
 profile_id = st.session_state['profileID']
 
-@st.cache_data
-def get_user_goals(profile_id):
-    """Fetch goals for the given profile ID."""
+# Fetch goals from API
+def get_goals(profile_id):
     try:
-        # TODO: Replace with actual API endpoint
-        resp = requests.get(f"http://web-api:4000/goals/profile/{profile_id}")
-        resp.raise_for_status()
-        return resp.json()
-    except requests.exceptions.HTTPError as http_err:
-        if resp.status_code == 404:
-            st.warning("No goals found for this profile. Showing example data.")
-            return [
-                {"id": 1, "goal": "Reach Diamond Rank", "target_date": "2025-09-01"},
-                {"id": 2, "goal": "100 Headshots", "target_date": "2025-09-15"}
-            ]
-        st.error(f"Error fetching goals: {http_err}")
-        return []
+        response = requests.get(f"{API_BASE_URL}/goals/profile/{profile_id}")
+        response.raise_for_status()
+        return response.json()
     except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching goals: {e}")
+        logger.error(f"Error fetching goals: {e}")
+        st.error(f"Failed to retrieve goals: {e}")
         return []
 
-# Title
 st.title("🎯 View Goals")
-st.write(f"Here are your current goals for {username}:")
+st.write(f"Goals for {st.session_state['username']}:")
 
-# Fetch goals
-goals_list = get_user_goals(profile_id)
-
-if goals_list:
-    st.table(goals_list)
+goals = get_goals(profile_id)
+if goals:
+    df = pd.DataFrame(goals)
+    st.table(df)
 else:
-    st.info("You don't have any goals yet.")
+    st.info("You have no goals yet!")
 
-st.divider()
+# Navigation buttons
+if st.button("⬅ Back to Milestones/Goals"):
+    st.switch_page("pages/10_Milestones_Goals.py")
 
-if st.button("⬅ Back to Home", use_container_width=True):
-    st.switch_page("Home.py")
+if st.button("➕ Add New Goal"):
+    st.switch_page("pages/09_Add_Goals.py")
