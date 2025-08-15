@@ -50,6 +50,7 @@ if st.button('Act as Emma Smith, a Casual Gamer',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'casual_gamer'
     st.session_state['username'] = 'Emma'
+    st.session_state['profileID'] = 1
     st.switch_page('pages/03_Emma_Smith_home.py')
 
 if st.button('Act as Matthew Bones, a Data Analyst for Team Liquid', 
