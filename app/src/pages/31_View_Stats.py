@@ -46,7 +46,8 @@ def get_summary_stats(profile_id, game_id):
         response = requests.get(f"{API_BASE_URL}/playerstats/summary/{profile_id}/{game_id}")
         response.raise_for_status()
         return response.json()
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
+        st.write(f"Error fetching stats: {e}")
         return None # Return None if stats don't exist (404) or other error
 
 @st.cache_data

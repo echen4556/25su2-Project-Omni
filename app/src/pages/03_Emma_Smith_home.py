@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks
 # --- Configuration ---
 st.set_page_config(layout='wide')
 logger = logging.getLogger(__name__)
-API_BASE_URL = "http://127.0.0.1:5000" # Replace with your API URL
+API_BASE_URL = "http://host.docker.internal:4000" # Replace with your API URL
 
 # --- Page Setup ---
 SideBarLinks()
@@ -62,6 +62,8 @@ if games_list:
 else:
     st.info("You haven't added any games to your profile yet!")
 
+if st.button("🔗 Link a New Game", use_container_width=True, type="secondary"):
+    st.switch_page("pages/35_Link_Games.py")
 
 st.divider()
 
@@ -69,15 +71,14 @@ st.divider()
 st.subheader("Tools & Features")
 
 # Premium section
-is_premium = st.session_state.get('is_premium', False)
 if is_premium:
     if st.button('🔫 Weapon Analytics', use_container_width=True):
-        st.switch_page('Weapon_Analytics.py')
+        st.switch_page('weapon_analytics')
     if st.button('🗺️ Map Insights', use_container_width=True):
-        st.switch_page('map_insights.py')
+        st.switch_page('map_insights')
 else:
     if st.button('💎 Upgrade to Premium to Unlock Weapon & Map Stats', type='secondary', use_container_width=True):
-        st.switch_page('pages/34_Premium_Upgrade.py')
+        st.switch_page('premium_upgrade')
 
 if st.button('🤝 Compare Players',
              type='primary',
