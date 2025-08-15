@@ -43,21 +43,15 @@ if games_list:
         game_name = game['name']
         game_id = game['gameID']
 
-        # When this button is clicked:
+    
         if st.button(f"📊 View {game_name} Stats", key=f"game_{game_id}", use_container_width=True):
-            # 1. Save the game info to the session state
+            # Store info for stats page
             st.session_state['selected_game_id'] = game_id
             st.session_state['selected_game_name'] = game_name
             st.session_state['viewing_profile_name'] = username
-
-            # 2. Switch to the stats page
-
             st.switch_page("pages/31_View_Stats.py")
 else:
     st.info("You haven't added any games to your profile yet!")
-
-
-st.divider()
 
 if st.button('🤝 Compare Players',
              type='primary',
