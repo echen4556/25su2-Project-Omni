@@ -103,6 +103,10 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "data_analyst":
             MatthewBonesNav()
             MilestonesAndGoalsNav()
+        
+        if st.session_state["role"] == "pro_gamer":
+            KaiNguyenNav()
+            MilestonesAndGoalsNav()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
