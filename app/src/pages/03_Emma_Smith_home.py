@@ -70,6 +70,12 @@ if games_list:
                 st.session_state['selected_game_name'] = game_name
                 st.session_state['viewing_profile_name'] = username
                 st.switch_page("pages/31_View_Stats.py")
+            if st.button(f"📜 View {game_name} Match History", key=f"match_history_{game_id}", use_container_width=True):
+                st.session_state['selected_game_id'] = game_id
+                st.session_state['selected_game_name'] = game_name
+                st.session_state['viewing_profile_name'] = username
+                st.switch_page("pages/match_history.py")
+
 
         with col2:
             if st.button("🗑️ Remove", key=f"remove_{game_id}", use_container_width=True):
