@@ -62,16 +62,6 @@ else:
 
 st.divider()
 
-if st.button('🔫 Weapon Analytics',
-             type='primary',
-             use_container_width=True):
-    st.switch_page('pages/Weapon_Analytics.py')
-
-if st.button('🗺️ Map Insights',
-             type='primary',
-             use_container_width=True):
-    st.switch_page('pages/map_insights.py')
-
 if st.button('🤝 Compare Players',
              type='primary',
              use_container_width=True):
