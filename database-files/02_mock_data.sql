@@ -507,14 +507,20 @@ INSERT INTO profiles (profileID, username, isAdmin, isPublic, isPremium, passwor
   (94, 'viewer_amy',  0, 1, 0, 'hashed_pw_amy'); -- public
 
 -- GAMES 
-INSERT INTO games (gameID, name) VALUES
+INSERT IGNORE INTO games (gameID, name) VALUES
   (10, 'Apex Legends'),
   (11, 'Valorant'),
-  (12, 'Overwatch 2'),
-  (99, 'Extraction Royale'); -- Games
+  (12, 'Overwatch 2'), (13, 'Red Dead Redemption 2'), (14, 'The Legend of Zelda: BOTW'), (15, 'Rocket League'),
+(16, 'Roblox'), (17, 'World of Warcraft'), (18, 'StarCraft II'),
+(19, 'Hearthstone'), (20, 'Rainbow Six Siege'), (21, 'Diablo IV'),
+(22, 'Lost Ark'), (23, 'Farlight 84'), (24, 'Mobile Legends'),
+(25, 'Arena of Valor'), (26, 'Paladins'), (27, 'Heroes of the Storm'),
+(28, 'Brawlhalla'), (29, 'Smite'), (30, 'Runescape'),
+(31, 'Terraria'), (32, 'Path of Exile'), (33, 'Warframe'),
+(34, 'Rust'), (35, 'DayZ'), (99, 'Extraction Royale'); -- Games
 
 -- MAPS
-INSERT INTO map (mapID, gameID, Name) VALUES
+INSERT IGNORE INTO map (mapID, gameID, Name) VALUES
   (100, 10, 'Worlds Edge'), -- Apex Legends map
   (101, 10, 'Olympus'), -- Apex Legends map
   (110, 11, 'Ascent'), -- Valorant map

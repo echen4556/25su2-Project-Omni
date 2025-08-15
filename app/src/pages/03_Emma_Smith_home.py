@@ -62,6 +62,8 @@ if games_list:
 else:
     st.info("You haven't added any games to your profile yet!")
 
+if st.button("🔗 Link a New Game", use_container_width=True, type="secondary"):
+    st.switch_page("pages/35_Link_Games.py")
 
 st.divider()
 
