@@ -23,15 +23,15 @@ if st.button('📊 View Player Stats Dashboard',
     st.switch_page('pages/31_View_Stats.py')
 
 # Premium section
-is_premium = False
+is_premium = st.session_state.get('is_premium', False)
 if is_premium:
     if st.button('🔫 Weapon Analytics', use_container_width=True):
-        st.switch_page('weapon_analytics')
+        st.switch_page('Weapon_Analytics.py')
     if st.button('🗺️ Map Insights', use_container_width=True):
-        st.switch_page('map_insights')
+        st.switch_page('map_insights.py')
 else:
     if st.button('💎 Upgrade to Premium to Unlock Weapon & Map Stats', type='secondary', use_container_width=True):
-        st.switch_page('premium_upgrade')
+        st.switch_page('pages/34_Premium_Upgrade.py')
 
 if st.button('🤝 Compare Players',
              type='primary',
