@@ -44,6 +44,11 @@ def JordanLeeNav():
         "pages/17_Jordan_Lee_home.py", label="System Administrator Home", icon="👤"
     )
 
+def EmmaSmithMatchHistoryNav():
+    st.sidebar.page_link(
+        "pages/match_history.py", label="Match History", icon="📜"
+    )
+
 
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
@@ -103,6 +108,12 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "data_analyst":
             MatthewBonesNav()
             MilestonesAndGoalsNav()
+        
+        if st.session_state["role"] == "casual_gamer":
+            EmmaSmithNav()
+            EmmaSmithMatchHistoryNav()
+            MilestonesAndGoalsNav()
+
         
         if st.session_state["role"] == "pro_gamer":
             KaiNguyenNav()
