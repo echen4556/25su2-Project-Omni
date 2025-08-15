@@ -2,36 +2,37 @@ import streamlit as st
 import requests
 import pandas as pd
 
-API_BASE_URL = 'http://api:4000'  # adjust if different
+API_BASE_URL = 'http://api:4000' 
 
-# -------------------------------
-# Ensure comparison data exists
-# -------------------------------
+# --- Ensure comparison exists ---
 if "compare" not in st.session_state:
-    st.warning("No players selected to compare. Please go back to Page 32.")
+    st.warning("No players selected to compare. Go back to Page 32.")
     st.stop()
 
 compare = st.session_state['compare']
 player1_name = compare['player1_name']
 player2_name = compare['player2_name']
 game_name = compare['game_name']
+show_maps_weapons = compare['show_maps_weapons']
 
-# -------------------------------
-# Helper functions
-# -------------------------------
+# --- Ensure user is logged in ---
+if 'username' not in st.session_state:
+    st.error("You must be logged in to view this page.")
+    st.stop()
+
+# --- Helper functions ---
 def get_profile(username, game_name):
+    """Fetch user profile and find the game instance"""
     try:
         response = requests.get(f"{API_BASE_URL}/profiles/{username}")
         response.raise_for_status()
         profile = response.json()
-        # Find the game instance for this game
         game_instance = next((g for g in profile['games'] if g['game_name'] == game_name), None)
         if game_instance:
             return {
-                "profileID": profile['profileID'],
+                "username": profile['username'],
                 "isPremium": profile['isPremium'],
-                "gameID": game_instance['game_id'],
-                "gameUsername": game_instance['gameUsername']
+                "gameID": game_instance['game_id']
             }
         else:
             return None
@@ -39,33 +40,31 @@ def get_profile(username, game_name):
         st.error(f"Failed to fetch profile for {username}")
         return None
 
-def get_player_stats(profile_id, game_id):
+def get_player_stats(username, game_id):
     try:
-        response = requests.get(f"{API_BASE_URL}/playerstats/{profile_id}/{game_id}")
+        response = requests.get(f"{API_BASE_URL}/playerstats/{username}/{game_id}")
         response.raise_for_status()
-        return response.json()  # Expected: {"Kills":.., "Deaths":.., "Assists":.., "Headshots":..}
+        return response.json()
     except requests.exceptions.RequestException:
-        return {"Kills":0, "Deaths":0, "Assists":0, "Headshots":0}
+        return {"Kills":0,"Deaths":0,"Assists":0,"Headshots":0}
 
-def get_maps(profile_id, game_id):
+def get_maps(username, game_id):
     try:
-        response = requests.get(f"{API_BASE_URL}/maps/{profile_id}/{game_id}")
+        response = requests.get(f"{API_BASE_URL}/maps/{username}/{game_id}")
         response.raise_for_status()
-        return response.json()  # List of maps with stats
-    except requests.exceptions.RequestException:
-        return []
-
-def get_weapons(profile_id, game_id):
-    try:
-        response = requests.get(f"{API_BASE_URL}/weapons/{profile_id}/{game_id}")
-        response.raise_for_status()
-        return response.json()  # List of weapons with stats
+        return response.json()
     except requests.exceptions.RequestException:
         return []
 
-# -------------------------------
-# Gather data for both players
-# -------------------------------
+def get_weapons(username, game_id):
+    try:
+        response = requests.get(f"{API_BASE_URL}/weapons/{username}/{game_id}")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException:
+        return []
+
+# --- Gather data for both players ---
 player_data = {}
 for player_name in [player1_name, player2_name]:
     profile = get_profile(player_name, game_name)
@@ -73,24 +72,21 @@ for player_name in [player1_name, player2_name]:
         st.error(f"No profile found for {player_name} in {game_name}")
         st.stop()
     
-    stats = get_player_stats(profile['profileID'], profile['gameID'])
-    premium = profile['isPremium']
+    stats = get_player_stats(player_name, profile['gameID'])
     
     maps, weapons = ([], [])
-    if premium:
-        maps = get_maps(profile['profileID'], profile['gameID'])
-        weapons = get_weapons(profile['profileID'], profile['gameID'])
+    if profile['isPremium']:
+        maps = get_maps(player_name, profile['gameID'])
+        weapons = get_weapons(player_name, profile['gameID'])
     
     player_data[player_name] = {
         "stats": stats,
-        "isPremium": premium,
+        "isPremium": profile['isPremium'],
         "maps": maps,
         "weapons": weapons
     }
 
-# -------------------------------
-# Display stats
-# -------------------------------
+# --- Display stats ---
 st.title(f"Comparing {player1_name} vs {player2_name}")
 st.subheader(f"Game: {game_name}")
 
@@ -104,7 +100,7 @@ for col, player_name in zip([col1, col2], [player1_name, player2_name]):
             st.write(f"**{stat}:** {value}")
         
         # Premium maps & weapons
-        if data['isPremium']:
+        if data['isPremium'] and show_maps_weapons:
             st.success("Premium: Maps & Weapons Stats")
             
             # Maps
@@ -125,8 +121,6 @@ for col, player_name in zip([col1, col2], [player1_name, player2_name]):
         else:
             st.info("Maps and weapons stats are hidden (premium only)")
 
-# -------------------------------
-# Optional: Back button
-# -------------------------------
+# --- Back button ---
 if st.button("Back to Player Selection"):
     st.switch_page("32_Select_Players")
