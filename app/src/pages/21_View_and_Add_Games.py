@@ -14,9 +14,11 @@ st.write("\n\n")
 st.write("Options")
 
 # ---- API location ----
-API_ROOT   = os.getenv("API_ROOT", "http://web-api:4000")  # or http://localhost:4000 if running locally
-API_PREFIX = os.getenv("API_PREFIX", "")                   # e.g. "/api" if you used a prefix when registering the blueprint
-GAMES_URL  = f"{API_ROOT}{API_PREFIX}/games"
+API_ROOT   = os.getenv("API_ROOT", "http://web-api:4000").rstrip("/")
+API_PREFIX = os.getenv("API_PREFIX", "").strip("/")  # "" or "api"
+
+BASE = f"{API_ROOT}/{API_PREFIX}" if API_PREFIX else API_ROOT
+GAMES_URL = f"{BASE}/games"
 
 
 # ---- Add Game form ----
