@@ -13,6 +13,8 @@ from backend.profiles.profile_routes import profiles
 from backend.milestones.milestones_routes import milestones
 from backend.weapons.weapons_routes import weapons
 from backend.goals.goals_routes import goals_bp
+from backend.matches.matches_routes import matches_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -59,6 +61,8 @@ def create_app():
     app.register_blueprint(maps, url_prefix="/maps")
     app.register_blueprint(profiles, url_prefix="/profiles")
     app.register_blueprint(weapons, url_prefix="/weapons")
+    app.register_blueprint(matches_bp, url_prefix="/matches")
+
 
     # Don't forget to return the app object
     return app

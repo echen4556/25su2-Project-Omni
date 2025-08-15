@@ -94,6 +94,10 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "data_analyst":
             MatthewBonesNav()
             MilestonesAndGoalsNav()
+        
+        if st.session_state["role"] == "pro_gamer":
+            KaiNguyenNav()
+            MilestonesAndGoalsNav()
 
         if st.session_state["role"] == "pro_gamer":
             KaiNguyenNav()
