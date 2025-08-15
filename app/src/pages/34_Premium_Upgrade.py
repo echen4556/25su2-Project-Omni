@@ -13,8 +13,7 @@ if not is_premium:
     # Example pricing/info
     st.markdown("""
     **Premium Pricing:**
-    - $4.99/month  
-    - $49.99/year
+    - $9.99/year
     """)
 
     if st.button("💳 Upgrade to Premium"):
