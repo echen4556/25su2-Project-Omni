@@ -277,11 +277,11 @@ INSERT IGNORE INTO map (mapID, gameID, POIs, Name) VALUES
 -- ====== ACCOUNT LINKS / OVERLAY ======
 -- gamesProfiles (sync overlay to game playing based on account active)
 INSERT INTO gamesProfiles (gameInstanceID, gameID, profileID, gameUsername, showOnDashboard) VALUES
-  (1000, 10, 1, 'J0RD4N', 1), -- Apex, jordan_lee account, on leaderboard
-  (1001, 11, 1, 'J0RD4N#NA', 1), -- Valorant, jordan_lee account, on leaderboard
-  (1002, 12, 1, 'Jord0W2', 0), -- Overwatch 2, jordan_lee account, not on leaderboard
-  (2000, 10, 3, 'RyuStats', 1), -- Apex, analyst_ryu account, on leaderboard
-  (3000, 32, 1, 'JordanXR', 1); -- Extraciton Royale, jordan_lee account, on leaderboard
+  (1000, 10, 10, 'J0RD4N', 1), -- Apex, jordan_lee account, on leaderboard
+  (1001, 11, 10, 'J0RD4N#NA', 1), -- Valorant, jordan_lee account, on leaderboard
+  (1002, 12, 10, 'Jord0W2', 0), -- Overwatch 2, jordan_lee account, not on leaderboard
+  (2000, 10, 13, 'RyuStats', 1), -- Apex, analyst_ryu account, on leaderboard
+  (3000, 32, 10, 'JordanXR', 1); -- Extraciton Royale, jordan_lee account, on leaderboard
 
 -- ====== MATCHES & STATS ======
 INSERT INTO matches (matchID, gameID, mapID, matchDate, matchType, lobbyRank) VALUES
