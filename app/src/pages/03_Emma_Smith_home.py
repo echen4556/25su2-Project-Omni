@@ -16,23 +16,32 @@ if 'username' not in st.session_state or 'profileID' not in st.session_state:
     st.error("Please log in to continue.")
     st.stop()
 
-is_premium = st.session_state.get('isPremium', False)
+is_premium = st.session_state.get('is_premium', False)
 username = st.session_state['username']
 profile_id = st.session_state['profileID']
 
-# --- Data Fetching Function ---
+# --- Data Fetching Functions ---
 @st.cache_data
 def get_user_games(profile_id):
     """Fetches all games associated with a user's profile."""
     try:
-        # REPLACE WITH DB CALL
-        return [
-            {'gameID': 1, 'name': 'Valorant'},
-            {'gameID': 2, 'name': 'Counter-Strike 2'}
-        ]
+        response_linked = requests.get(f"{API_BASE_URL}/games/profile/{profile_id}")
+        response_linked.raise_for_status()
+        linked_games = response_linked.json()
+        return linked_games
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching games: {e}")
         return []
+
+def unlink_game(profile_id, game_id):
+    """Sends a DELETE request to unlink a game from the user's profile."""
+    try:
+        response = requests.delete(f"{API_BASE_URL}/games/profile/{profile_id}/{game_id}")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error unlinking game: {e}")
+        return None
 
 # --- UI Display ---
 
@@ -45,23 +54,53 @@ st.subheader("My Game Dashboards")
 games_list = get_user_games(profile_id)
 
 if games_list:
+    # Use a session state variable to manage the confirmation dialog
+    if 'confirming_removal' not in st.session_state:
+        st.session_state.confirming_removal = None
+
     for game in games_list:
         game_name = game['name']
         game_id = game['gameID']
 
-        # When this button is clicked:
-        if st.button(f"📊 View {game_name} Stats", key=f"game_{game_id}", use_container_width=True):
-            # 1. Save the game info to the session state
-            st.session_state['selected_game_id'] = game_id
-            st.session_state['selected_game_name'] = game_name
-            st.session_state['viewing_profile_name'] = username
+        col1, col2 = st.columns([4, 1]) # Make the first column wider
 
-            # 2. Switch to the stats page
+        with col1:
+            if st.button(f"📊 View {game_name} Stats", key=f"view_{game_id}", use_container_width=True):
+                st.session_state['selected_game_id'] = game_id
+                st.session_state['selected_game_name'] = game_name
+                st.session_state['viewing_profile_name'] = username
+                st.switch_page("pages/31_View_Stats.py")
 
-            st.switch_page("pages/31_View_Stats.py")
+        with col2:
+            if st.button("🗑️ Remove", key=f"remove_{game_id}", use_container_width=True):
+                # When remove is clicked, store the game info for confirmation
+                st.session_state.confirming_removal = {'id': game_id, 'name': game_name}
+                st.rerun() # Rerun to show the confirmation dialog
+
 else:
     st.info("You haven't added any games to your profile yet!")
 
+# --- Confirmation Dialog Logic ---
+if st.session_state.confirming_removal:
+    game_to_remove = st.session_state.confirming_removal
+    with st.container(border=True):
+        st.warning(f"Are you sure you want to unlink **{game_to_remove['name']}** from your profile?")
+
+        confirm_col1, confirm_col2 = st.columns(2)
+        with confirm_col1:
+            if st.button("Yes, unlink this game", key="confirm_yes", type="primary", use_container_width=True):
+                unlink_game(profile_id, game_to_remove['id'])
+                st.session_state.confirming_removal = None # Clear confirmation state
+                st.cache_data.clear() # Clear cache to refresh game list
+                st.success(f"{game_to_remove['name']} has been unlinked.")
+                st.rerun()
+
+        with confirm_col2:
+            if st.button("No, cancel", key="confirm_no", use_container_width=True):
+                st.session_state.confirming_removal = None # Clear confirmation state
+                st.rerun()
+
+# --- Page Links ---
 if st.button("🔗 Link a New Game", use_container_width=True, type="secondary"):
     st.switch_page("pages/35_Link_Games.py")
 
@@ -70,20 +109,14 @@ st.divider()
 # --- Other Navigation Buttons ---
 st.subheader("Tools & Features")
 
-# Premium section
 if is_premium:
     if st.button('🔫 Weapon Analytics', use_container_width=True):
         st.switch_page('weapon_analytics')
     if st.button('🗺️ Map Insights', use_container_width=True):
         st.switch_page('map_insights')
 else:
-    if st.button('💎 Upgrade to Premium to Unlock Weapon & Map Stats', type='secondary', use_container_width=True):
-        st.switch_page('premium_upgrade')
+    if st.button('💎 Upgrade to Premium', type='secondary', use_container_width=True):
+        st.switch_page('pages/34_Premium_Upgrade.py')
 
-if st.button('🤝 Compare Players',
-             type='primary',
-             use_container_width=True):
+if st.button('🤝 Compare Players', type='primary', use_container_width=True):
     st.switch_page('pages/32_Select_Players.py')
-
-
-
