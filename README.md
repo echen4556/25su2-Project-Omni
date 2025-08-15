@@ -4,7 +4,7 @@
 **Omni.gg** is a web application designed to provide analytics, statistics, and strategy tools for fps gamers. The platform allows users to:  
 - View player stats dashboards  
 - Compare player performance  
-- Access premium features like Weapon Analytics and Map Insights  
+- Access premium features like detailed weapon analytics and map insights  
 
 The application is built using **Python, Streamlit, MySQL**, and **Docker** for containerized deployment.
 
@@ -66,26 +66,28 @@ Yuna Ryu
 
 
 ## User Roles
-The code in this project demonstrates how to implement a simple Role-based Access Control (RBAC) system in Streamlit without actually using user authentication (usernames and passwords). The Streamlit pages are split up among 4 roles - Casual Gamer, Data Analyst, Pro Gamer, and System Adminstrator.
+The code in this project demonstrates how to implement a simple Role-based Access Control (RBAC) system in Streamlit without using a user authentication (usernames and passwords). The Streamlit pages are split up among 4 roles - Casual Gamer, Data Analyst, Pro Gamer, and System Adminstrator.
 
-- **Casual Gamer**: Can view basic player stats, have an option of upgrading to a premium (and being able to view more advanced stats), and can compare their stats with others
+- **Casual Gamer**: As a casual gamer, the user can view basic player stats, have an option of upgrading to a premium (and being able to view more advanced stats such as weapon analytics and map insights), and can compare their stats with others
 
-- **Data Analyst**: Can view player stats, weapon analytics, map insights, and can compare players with other players to assess how players perform
+- **Data Analyst**: As a data analyst for an E-sports team, the user can view player stats, weapon analytics, map insights, and can compare players with other players to assess how players perform
 
-- **Pro Gamer**: Can view player stats, weapon analytics, mapp insights, and can compare their stats with others to view and evaluate their performance
+- **Pro Gamer**: As a pro gamer, the user can view player stats, weapon analytics, map insights, and can compare their stats with others to view and evaluate their performance
 
-- **System Administrator**: Can manage roles, view the performance of users, and see anomalies to review data glitches or potential cheaters
+- **System Administrator**: As a system administrator, the user can manage roles, view the performance of users, and see anomalies to review data glitches or potential cheaters
 
 
 ## Planned Features
+While the core functionality is in place, we have several features planned for future development to enhance the user experience.
+
 ### Goals and Milestones
 The "Goals and Milestones" feature is designed to be a part of the application, allowing users to define, track, and manage key objectives.
 
 **Current Status:**
-Due to initial project time constraints, the core functionality for managing goals and milestones is not yet fully implemented. Users are currently able to view goals and milestones, but the interactive ability to modify them is unavailable.
+Due to initial project time constraints, the core functionality for managing goals and milestones is not yet fully implemented. Users are currently able to view goals and milestones, but the interactive ability to modify them (editing, adding, and removing) is unavailable.
 
 **Planned Features:**
-- **Editing and Deletion:** Users will have full control to **edit** and **remove** goals and milestones after they have been created.
+- **Editing and Deletion:** Users will have full control to **edit**, **add**, and **remove** goals and milestones after they have been created.
 - **Progress Tracking:** Future updates will include a more robust system for tracking and visualizing the progress of each goal.
 - **Intuitive UI:** An interactive user interface will be developed to make the process of creating and managing goals and milestones seamless and efficient.
 
