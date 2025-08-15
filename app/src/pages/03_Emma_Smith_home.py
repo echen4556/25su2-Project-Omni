@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks
 # --- Configuration ---
 st.set_page_config(layout='wide')
 logger = logging.getLogger(__name__)
-API_BASE_URL = "http://host.docker.internal:4000" # Replace with your API URL
+API_BASE_URL = "http://web-api:4000" # Replace with your API URL
 
 # --- Page Setup ---
 SideBarLinks()
