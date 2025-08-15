@@ -177,7 +177,7 @@ INSERT IGNORE INTO gamesProfiles ( gameID, profileID, gameUsername, showOnDashbo
 (1, 9, 'KaiGhost', 1);
 
 INSERT IGNORE INTO map (gameID, POIs, Name) VALUES
-  (1, 'A Site,B Site,Mid', 'Ascent');
+  (1, 'A Site, B Site,Mid', 'Ascent');
 
 INSERT IGNORE INTO weapons (gameID, weaponType, name) VALUES
  (1, 'Rifle',  'Vandal');
