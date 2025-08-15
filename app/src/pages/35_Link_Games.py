@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks # Assuming this is your navigation module
 # --- Configuration ---
 st.set_page_config(layout="wide")
 logger = logging.getLogger(__name__)
-API_BASE_URL = "http://127.0.0.1:4000" # Replace with your actual Flask API URL
+API_BASE_URL = "http://host.docker.internal:4000" # Replace with your actual Flask API URL
 
 # --- Page Setup ---
 SideBarLinks()
@@ -109,3 +109,7 @@ else:
                     st.info("Your homepage will update with the new game shortly.")
                     # Clear the cache to force a refresh of the available games list
                     st.cache_data.clear()
+
+if st.button("⬅️ Back to Profile", use_container_width=True):
+    # This assumes the homepage path was stored in session_state during login
+    st.switch_page('pages/03_Emma_Smith_home.py')
