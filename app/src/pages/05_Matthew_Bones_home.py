@@ -7,6 +7,15 @@ from modules.nav import SideBarLinks
 # Page layout setup
 st.set_page_config(layout='wide')
 
+# --- Initialize session state for Matthew Bones ---
+if 'username' not in st.session_state:
+    st.session_state['username'] = "Matthew Bones"
+if 'profileID' not in st.session_state:
+    st.session_state['profileID'] = 101  # Example profile ID
+if 'isPremium' not in st.session_state:
+    st.session_state['isPremium'] = True  # Matthew is premium
+
+
 # Show sidebar links for the current user
 SideBarLinks()
 
