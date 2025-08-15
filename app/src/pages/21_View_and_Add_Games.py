@@ -3,6 +3,7 @@ import logging
 import requests
 import streamlit as st
 from modules.nav import SideBarLinks
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,8 @@ except requests.RequestException as e:
 
 if games:
     games_sorted = sorted(games, key=lambda g: (g["ID"] is None, g["ID"]))
-    st.table(games_sorted)
+    df = pd.DataFrame(games_sorted).set_index("ID")  # <-- set ID as index
+    st.table(df)
 else:
     st.info("No games found.")
 
