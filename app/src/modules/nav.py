@@ -92,6 +92,7 @@ def SideBarLinks(show_home=False):
     if show_home:
         # Show the Home page link (the landing page)
         HomeNav()
+        
 
     # Show the other page navigators depending on the users' role.
     if st.session_state["authenticated"]:
@@ -117,6 +118,8 @@ def SideBarLinks(show_home=False):
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
             AdminPageNav()
+
+    st.sidebar.page_link("pages/01_User_Search.py", label="Search", icon="🔎")
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()

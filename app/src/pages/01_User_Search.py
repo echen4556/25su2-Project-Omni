@@ -1,7 +1,8 @@
-# pages/20_Find_Player_And_Game.py
+# pages/22_Player_Stats.py
 
 import os
 import logging
+import json
 import requests
 import pandas as pd
 import streamlit as st
@@ -12,57 +13,42 @@ logger = logging.getLogger(__name__)
 # ---------- Page setup ----------
 st.set_page_config(layout="wide")
 SideBarLinks()
-
-st.title("Find Player by Game")
-st.caption("Search for a user, then choose a game to view their info or stats.")
+st.title("Player Stats")
 
 # ---------- API location ----------
 API_ROOT = os.getenv("API_ROOT", "http://web-api:4000").rstrip("/")
 
 # profiles blueprint has prefix + absolute routes -> /profiles/profiles [...]
-PROFILES_URL = f"{API_ROOT}/profiles/profiles"           # list all profiles
-PROFILE_GAMES = lambda pid: f"{API_ROOT}/games/profile/{pid}"  # list games for a profile
+PROFILES_URL  = f"{API_ROOT}/profiles/profiles"                    # list all profiles
+PROFILE_GAMES = lambda pid: f"{API_ROOT}/games/profile/{pid}"      # list games for a profile
+
+# playerStats blueprint is mounted with url_prefix="/playerstats"
+SUMMARY_URL   = lambda pid, gid: f"{API_ROOT}/playerstats/summary/{pid}/{gid}"
+WEAPONS_URL   = lambda pid, gid: f"{API_ROOT}/playerstats/weapon/{pid}/{gid}"
+MAPS_URL      = lambda pid, gid: f"{API_ROOT}/playerstats/map/{pid}/{gid}"
 
 # ---------- Normalizers ----------
 def normalize_profiles(raw):
-    """
-    Backend returns either dict rows or tuples in this order:
-    (profileID, username, isAdmin, isPublic, isPremium)
-    Normalize to: {"ID","Username","Admin","Public","Premium"}
-    """
-    if not raw:
-        return []
+    """Raw rows -> [{'ID','Username',...}]"""
+    if not raw: return []
     first = raw[0]
     if isinstance(first, dict):
-        return [{
-            "ID":        p.get("profileID"),
-            "Username":  p.get("username"),
-            "Admin":     p.get("isAdmin"),
-            "Public":    p.get("isPublic"),
-            "Premium":   p.get("isPremium"),
-        } for p in raw]
+        return [{"ID": p.get("profileID"), "Username": p.get("username")} for p in raw]
     out = []
-    for p in raw:
-        pid    = p[0] if len(p) > 0 else None
-        uname  = p[1] if len(p) > 1 else None
-        admin  = p[2] if len(p) > 2 else None
-        public = p[3] if len(p) > 3 else None
-        prem   = p[4] if len(p) > 4 else None
-        out.append({"ID": pid, "Username": uname, "Admin": admin, "Public": public, "Premium": prem})
+    for p in raw:  # tuples: (profileID, username, isAdmin, isPublic, isPremium)
+        pid = p[0] if len(p) > 0 else None
+        uname = p[1] if len(p) > 1 else None
+        out.append({"ID": pid, "Username": uname})
     return out
 
 def normalize_games(raw):
-    """
-    /games/profile/<id> returns either dicts {gameID,name} or tuples (gameID, name)
-    Normalize to: {"ID","Name"}
-    """
-    if not raw:
-        return []
+    """Raw rows -> [{'ID','Name'}]"""
+    if not raw: return []
     first = raw[0]
     if isinstance(first, dict):
         return [{"ID": g.get("gameID"), "Name": g.get("name")} for g in raw]
     out = []
-    for g in raw:
+    for g in raw:  # tuples: (gameID, name)
         gid  = g[0] if len(g) > 0 else None
         name = g[1] if len(g) > 1 else None
         out.append({"ID": gid, "Name": name})
@@ -72,13 +58,34 @@ def dedupe_by_id(rows, id_key="ID"):
     seen, out = set(), []
     for r in rows:
         k = r.get(id_key)
-        if k in seen:
-            continue
-        seen.add(k)
-        out.append(r)
+        if k in seen: continue
+        seen.add(k); out.append(r)
     return out
 
-# ---------- Data fetchers (cached) ----------
+def normalize_row_list(raw, rename=None):
+    """
+    Accept list[dict] or list[tuple]; return list[dict].
+    Optional key rename, e.g. {'name':'Weapon','weaponID':'ID'}
+    """
+    if raw is None: return []
+    rows = raw if isinstance(raw, list) else [raw]
+    if not rows: return []
+    out = []
+    if isinstance(rows[0], dict):
+        for d in rows:
+            d2 = dict(d)
+            if rename:
+                for old, new in rename.items():
+                    if old in d2: d2[new] = d2.pop(old)
+            out.append(d2)
+        return out
+    width = max(len(r) for r in rows)
+    cols = [f"c{i+1}" for i in range(width)]
+    for r in rows:
+        out.append({cols[i]: (r[i] if i < len(r) else None) for i in range(width)})
+    return out
+
+# ---------- Cached fetchers ----------
 @st.cache_data(ttl=30)
 def fetch_all_profiles():
     r = requests.get(PROFILES_URL, timeout=8)
@@ -91,48 +98,54 @@ def fetch_profile_games(profile_id: int):
     r.raise_for_status()
     return normalize_games(r.json())
 
-# ---------- UI: search ----------
-col_q, col_btn = st.columns([3, 1])
-with col_q:
-    term = st.text_input("Username", value=st.session_state.pop("player_search_term", ""), placeholder="Start typing a username…").strip()
-with col_btn:
-    clear = st.button("Clear")
-    if clear:
-        term = ""
-        st.session_state.pop("preselect_profile_id", None)
+def safe_get_json(url: str):
+    r = requests.get(url, timeout=12)
+    r.raise_for_status()
+    return r.json()
 
-selected_profile = None
-matches = []
+# ---------- UI: search + select ----------
+top = st.container()
+with top:
+    col_q, col_clear = st.columns([3,1])
+    with col_q:
+        term = st.text_input(
+            "Username",
+            value=st.session_state.pop("player_search_term", ""),
+            placeholder="Start typing a username…"
+        ).strip()
+    with col_clear:
+        if st.button("Clear"):
+            term = ""
+            st.session_state.pop("preselect_profile_id", None)
 
-if term:
-    with st.spinner("Searching users..."):
-        try:
-            all_profiles = fetch_all_profiles()
-            t = term.lower()
-            matches = [p for p in all_profiles if t in (p["Username"] or "").lower()]
-        except requests.RequestException as e:
-            st.error(f"Error contacting server: {e}")
-        except ValueError:
-            st.error("Profiles endpoint did not return JSON")
+    selected_profile = None
+    matches = []
+    if term:
+        with st.spinner("Searching users..."):
+            try:
+                all_profiles = fetch_all_profiles()
+                t = term.lower()
+                matches = [p for p in all_profiles if t in (p["Username"] or "").lower()]
+            except requests.RequestException as e:
+                st.error(f"Error contacting server: {e}")
+            except ValueError:
+                st.error("Profiles endpoint did not return JSON")
 
-# ---------- Choose exact user if needed ----------
-pre_pid = st.session_state.pop("preselect_profile_id", None)
+    pre_pid = st.session_state.pop("preselect_profile_id", None)
 
-if matches:
-    st.markdown("#### Matching Users")
-    # Display quick table of matches for context
-    st.table(pd.DataFrame(matches)[["ID", "Username"]].set_index("ID"))
+    if matches:
+        st.markdown("#### Matching Users")
+        st.table(pd.DataFrame(matches)[["ID","Username"]].set_index("ID"))
+        if pre_pid is not None:
+            selected_profile = next((m for m in matches if m["ID"] == pre_pid), matches[0])
+        elif len(matches) > 1:
+            options = {f'{m["Username"]} (ID {m["ID"]})': m for m in matches}
+            chosen = st.selectbox("Multiple matches — choose a profile:", list(options.keys()))
+            selected_profile = options[chosen]
+        else:
+            selected_profile = matches[0]
 
-    if pre_pid is not None:
-        selected_profile = next((m for m in matches if m["ID"] == pre_pid), matches[0])
-    elif len(matches) > 1:
-        options = {f'{m["Username"]} (ID {m["ID"]})': m for m in matches}
-        chosen = st.selectbox("Multiple matches — choose a profile:", list(options.keys()))
-        selected_profile = options[chosen]
-    else:
-        selected_profile = matches[0]
-
-# ---------- Show profile + game dropdown ----------
+# ---------- Game dropdown ----------
 selected_game = None
 if selected_profile:
     st.markdown("### Selected Profile")
@@ -144,29 +157,106 @@ if selected_profile:
         games = dedupe_by_id(games, "ID")
         if games:
             gopts = {f'{g["Name"]} (ID {g["ID"]})': g for g in games}
-            chosen_game = st.selectbox("Game", list(gopts.keys()))
+            chosen_game = st.selectbox("Game", list(gopts.keys()), key="stats_game_choice")
             selected_game = gopts[chosen_game]
         else:
             st.info("This user has no linked games.")
     except requests.RequestException as e:
         st.error(f"Error loading games: {e}")
 
-# ---------- Actions ----------
-c1, c2 = st.columns(2)
-if c1.button("Open Profile Page", disabled=not bool(selected_profile)):
-    st.session_state["player_search_term"] = selected_profile["Username"]
-    st.session_state["preselect_profile_id"] = selected_profile["ID"]
-    st.switch_page("pages/21_Player_Search.py")
+# ---------- Stats sections (appear when both chosen) ----------
+if selected_profile and selected_game:
+    pid, gid = selected_profile["ID"], selected_game["ID"]
+    username = selected_profile["Username"]; game_name = selected_game["Name"]
+    st.caption(f"User: **{username}** (ID {pid})  •  Game: **{game_name}** (ID {gid})")
 
-if c2.button("Open Stats Page", disabled=not (selected_profile and selected_game)):
-    st.session_state["player_search_term"] = selected_profile["Username"]
-    st.session_state["preselect_profile_id"] = selected_profile["ID"]
-    st.session_state["selected_game_id"] = selected_game["ID"]
-    st.session_state["selected_game_name"] = selected_game["Name"]
-    # Change this to your actual stats page path when you have it:
-    st.switch_page("pages/22_Player_Stats.py")
+    # --- Summary ---
+    try:
+        with st.spinner("Loading summary..."):
+            summary_raw = safe_get_json(SUMMARY_URL(pid, gid))
+    except requests.RequestException as e:
+        st.error(f"Failed to load summary: {e}")
+        summary_raw = None
+
+    summary_dict = summary_raw if isinstance(summary_raw, dict) else (
+        summary_raw[0] if isinstance(summary_raw, list) and summary_raw and isinstance(summary_raw[0], dict) else None
+    )
+
+    st.subheader("Summary")
+    if summary_dict:
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("Kills", int(summary_dict.get("kills", 0)) if str(summary_dict.get("kills", "")).isdigit() else summary_dict.get("kills", 0))
+        m2.metric("Deaths", int(summary_dict.get("deaths", 0)) if str(summary_dict.get("deaths", "")).isdigit() else summary_dict.get("deaths", 0))
+        m3.metric("Assists", int(summary_dict.get("assists", 0)) if str(summary_dict.get("assists", "")).isdigit() else summary_dict.get("assists", 0))
+        m4.metric("Wins", int(summary_dict.get("totalWins", 0)) if str(summary_dict.get("totalWins", "")).isdigit() else summary_dict.get("totalWins", 0))
+
+        # KD and Headshot %
+        try:
+            k = float(summary_dict.get("kills", 0)); d = float(summary_dict.get("deaths", 0))
+            kd = (k / d) if d > 0 else None
+        except Exception:
+            kd = None
+        try:
+            hs = float(summary_dict.get("totalHeadshots", 0)); hits = float(summary_dict.get("totalShotsHit", 0))
+            hs_rate = (hs / hits) if hits > 0 else None
+        except Exception:
+            hs_rate = None
+
+        c1, c2 = st.columns(2)
+        if kd is not None: c1.metric("K/D", f"{kd:.2f}")
+        if hs_rate is not None: c2.metric("Headshot %", f"{hs_rate*100:.1f}%")
+
+        df_sum = pd.DataFrame([summary_dict]).T.reset_index()
+        df_sum.columns = ["Metric", "Value"]
+        st.table(df_sum.set_index("Metric"))
+    elif summary_raw:
+        rows = normalize_row_list(summary_raw)
+        st.table(pd.DataFrame(rows))
+    else:
+        st.info("No summary stats found.")
+
+    st.divider()
+
+    # --- Weapons ---
+    try:
+        with st.spinner("Loading weapon stats..."):
+            weapons_raw = safe_get_json(WEAPONS_URL(pid, gid))
+            weapons = normalize_row_list(weapons_raw, rename={"name": "Weapon", "weaponID": "ID"})
+    except requests.RequestException as e:
+        st.error(f"Failed to load weapon stats: {e}")
+        weapons = []
+
+    if weapons:
+        dfw = pd.DataFrame(weapons)
+        sort_key = next((k for k in ("kills","totalUsageTime","accuracy","amountBought") if k in dfw.columns), None)
+        if sort_key: dfw = dfw.sort_values(by=sort_key, ascending=False)
+        if "ID" in dfw.columns: dfw = dfw.set_index("ID")
+        st.subheader("Weapons")
+        st.table(dfw)
+    else:
+        st.info("No weapon stats found.")
+    st.divider()
+
+    # --- Maps ---
+    try:
+        with st.spinner("Loading map stats..."):
+            maps_raw = safe_get_json(MAPS_URL(pid, gid))
+            maps_list = normalize_row_list(maps_raw, rename={"name": "Map", "mapID": "ID"})
+    except requests.RequestException as e:
+        st.error(f"Failed to load map stats: {e}")
+        maps_list = []
+
+    if maps_list:
+        dfm = pd.DataFrame(maps_list)
+        sort_key = next((k for k in ("wins","kills","losses") if k in dfm.columns), None)
+        if sort_key: dfm = dfm.sort_values(by=sort_key, ascending=False)
+        if "ID" in dfm.columns: dfm = dfm.set_index("ID")
+        st.subheader("Maps")
+        st.table(dfm)
+    else:
+        st.info("No map stats found.")
 
 # ---------- Back ----------
 st.divider()
-if st.button("⬅ Back to Admin Home"):
-    st.switch_page("pages/17_Jordan_Lee_home.py")
+if st.button("⬅ Back to Home"):
+    st.switch_page("Home.py")
