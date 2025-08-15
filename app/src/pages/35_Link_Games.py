@@ -49,7 +49,6 @@ def get_summary_stats(profile_id, game_id):
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
-        st.write(f"Error fetching stats: {e}")
         return None # Return None if stats don't exist (404) or other error
 
 @st.cache_data
@@ -142,3 +141,7 @@ else:
             st.info("Upgrade to Premium to unlock detailed map stats.")
             if st.button("💎 Upgrade Now", key="map_upgrade", use_container_width=True):
                 st.switch_page("pages/34_Premium_Upgrade.py")
+
+if st.button("⬅️ Back to Profile", use_container_width=True):
+    # This assumes the homepage path was stored in session_state during login
+    st.switch_page('pages/03_Emma_Smith_home.py')

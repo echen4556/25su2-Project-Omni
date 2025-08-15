@@ -51,6 +51,7 @@ if st.button('Act as Emma Smith, a Casual Gamer',
     st.session_state['role'] = 'casual_gamer'
     st.session_state['username'] = 'Emma'
     st.session_state['profileID'] = 1
+    st.session_state['isPremium'] = False
     st.switch_page('pages/03_Emma_Smith_home.py')
 
 if st.button('Act as Matthew Bones, a Data Analyst for Team Liquid', 
@@ -60,6 +61,7 @@ if st.button('Act as Matthew Bones, a Data Analyst for Team Liquid',
     st.session_state['role'] = 'data_analyst'
     st.session_state['username'] = 'Matthew'
     st.session_state['profileID'] = 2
+    st.session_state['isPremium'] = True
     st.switch_page('pages/05_Matthew_Bones_home.py')
 
 if st.button('Act as Kai Nguyen, a Pro Gamer', 

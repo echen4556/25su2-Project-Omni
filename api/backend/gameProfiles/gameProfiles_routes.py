@@ -72,3 +72,39 @@ def hide_game_profile(gameInstanceID):
     ''', (gameInstanceID,))
     db.get_db().commit()
     return jsonify({"message": "Game profile hidden from dashboard!"}), 200
+
+# GET all games linked to a specific profile
+@game_profiles_bp.route('/games/profile/<int:profileID>', methods=['GET'])
+def get_games_for_profile(profileID):
+    current_app.logger.info(f'GET /games/profile/{profileID}')
+    cursor = db.get_db().cursor()
+    # Join with the games table to get the game names directly
+    query = '''
+        SELECT g.gameID, g.name
+        FROM games g
+        JOIN gamesProfiles gp ON g.gameID = gp.gameID
+        WHERE gp.profileID = %s
+    '''
+    cursor.execute(query, (profileID,))
+    data = cursor.fetchall()
+    return make_response(jsonify(data), 200)
+
+# DELETE: Unlink a game from a user's profile
+@game_profiles_bp.route('/games/profile/<int:profileID>/<int:gameID>', methods=['DELETE'])
+def unlink_game_from_profile(profileID, gameID):
+    current_app.logger.info(f'DELETE /games/profile/{profileID}/{gameID}')
+    cursor = db.get_db().cursor()
+    try:
+        cursor.execute('''
+            DELETE FROM gamesProfiles WHERE profileID = %s AND gameID = %s
+        ''', (profileID, gameID))
+        db.get_db().commit()
+        # Check if any row was actually deleted
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Link not found or already deleted"}), 404
+        return jsonify({"message": "Game successfully unlinked from profile!"}), 200
+    except Exception as e:
+        db.get_db().rollback()
+        current_app.logger.error(f"Database error: {e}")
+        return jsonify({"error": "Failed to unlink game."}), 500
+
