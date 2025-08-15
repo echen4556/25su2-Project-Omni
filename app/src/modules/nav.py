@@ -14,7 +14,7 @@ def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
 
-#### ------------------------ Examples for Role of pol_strat_advisor ------------------------
+#### ------------------------ Examples for Role ------------------------
 def MatthewBonesNav():
     st.sidebar.page_link(
         "pages/05_Matthew_Bones_home.py", label="Data Analyst Home", icon="👤"

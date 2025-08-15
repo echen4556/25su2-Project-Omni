@@ -29,19 +29,19 @@ st.write('')
 if st.button('📊 View Player Stats Dashboard',
              type='primary',
              use_container_width=True):
-    st.switch_page('')
+    st.switch_page('pages/31_View_Stats.py')
 
 if st.button('🔫 Weapon Analytics',
              type='primary',
              use_container_width=True):
-    st.switch_page('')
+    st.switch_page('pages/Weapon_Analytics.py')
 
 if st.button('🗺️ Map Insights',
              type='primary',
              use_container_width=True):
-    st.switch_page('')
+    st.switch_page('pages/map_insights.py')
 
 if st.button('🤝 Compare Players',
              type='primary',
              use_container_width=True):
-    st.switch_page('pages/32_Select_Players.py')
+    st.switch_page('pages/33_Compare_Players.py')
