@@ -7,7 +7,7 @@ from modules.nav import SideBarLinks # Assuming this is your navigation module
 # --- Configuration ---
 st.set_page_config(layout="wide")
 logger = logging.getLogger(__name__)
-API_BASE_URL = "http://127.0.0.1:4000" # IMPORTANT: Replace with your actual Flask API URL
+API_BASE_URL = "http://host.docker.internal:4000" # IMPORTANT: Replace with your actual Flask API URL
 
 # --- Page Setup ---
 # Show sidebar links from your navigation module
@@ -18,12 +18,14 @@ SideBarLinks()
 if 'profileID' not in st.session_state or \
    'selected_game_id' not in st.session_state or \
    'selected_game_name' not in st.session_state or \
-   'viewing_profile_name' not in st.session_state:
+   'viewing_profile_name' not in st.session_state or \
+   'isPremium' not in st.session_state:
     st.error("Could not load game stats. Please navigate from the homepage.")
     st.stop()
 
 # Get premium status from session
-is_premium = st.session_state.get('isPremium', False)
+is_premium = st.session_state.get('isPremium')
+st.write(is_premium)
 
 # Get all required info from the session state
 profile_id = st.session_state['profileID']
@@ -120,7 +122,7 @@ else:
         else:
             st.info("Upgrade to Premium to unlock detailed weapon stats.")
             if st.button("💎 Upgrade Now", key="weapon_upgrade", use_container_width=True):
-                st.switch_page("premium_upgrade")
+                st.switch_page("pages/34_Premium_Upgrade.py")
 
     with col_m:
         st.subheader("Map Performance")
@@ -139,4 +141,4 @@ else:
         else:
             st.info("Upgrade to Premium to unlock detailed map stats.")
             if st.button("💎 Upgrade Now", key="map_upgrade", use_container_width=True):
-                st.switch_page("premium_upgrade")
+                st.switch_page("pages/34_Premium_Upgrade.py")
