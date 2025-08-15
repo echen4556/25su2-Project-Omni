@@ -17,23 +17,115 @@ if 'username' not in st.session_state or 'profileID' not in st.session_state:
 
 profile_id = st.session_state['profileID']
 
-st.title("🏆 View Milestones")
-st.write("Here are your tracked milestones:")
+st.title("📅 Progress Timeline")
+st.write("A chronological view of your milestones and goals:")
 
-# Fetch milestones from API
-try:
-    r = requests.get(f"{API_BASE_URL}/milestones/profile/{profile_id}")
-    r.raise_for_status()
-    milestones = r.json()
-except requests.exceptions.RequestException as e:
-    st.error(f"Error fetching milestones: {e}")
-    milestones = []
+def fetch_data(endpoint):
+    try:
+        r = requests.get(f"{API_BASE_URL}/{endpoint}/profile/{profile_id}")
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching {endpoint}: {e}")
+        return []
 
-if milestones:
-    df = pd.DataFrame(milestones)
-    st.table(df)
+# Fetch milestones & goals
+milestones = fetch_data("milestones")
+goals = fetch_data("goals")
+
+# Build combined timeline list
+timeline_entries = []
+
+for m in milestones:
+    if m.get('dateAchieved'):
+        timeline_entries.append({
+            "type": "🏆 Milestone",
+            "color": "#FFD700",  # gold
+            "description": m.get("description", "No description"),
+            "date": m['dateAchieved'],
+            "category": m.get("category", ""),
+            "notes": m.get("notes", "")
+        })
+
+for g in goals:
+    if g.get('dateCreated'):
+        timeline_entries.append({
+            "type": "🎯 Goal Created",
+            "color": "#1E90FF",  # blue
+            "description": g.get("description", "No description"),
+            "date": g['dateCreated'],
+            "category": g.get("category", ""),
+            "notes": g.get("notes", "")
+        })
+    if g.get('dateAchieved'):
+        timeline_entries.append({
+            "type": "✅ Goal Achieved",
+            "color": "#4CAF50",  # green
+            "description": g.get("description", "No description"),
+            "date": g['dateAchieved'],
+            "category": g.get("category", ""),
+            "notes": g.get("notes", "")
+        })
+
+# Convert to DataFrame & sort by date
+if timeline_entries:
+    df = pd.DataFrame(timeline_entries)
+    df['date'] = pd.to_datetime(df['date'], errors='coerce')
+    df = df.sort_values(by='date')
+
+    # Timeline CSS
+    st.markdown("""
+    <style>
+    .timeline {
+        border-left: 3px solid #bbb;
+        margin-left: 20px;
+        padding-left: 20px;
+    }
+    .timeline-item {
+        margin-bottom: 20px;
+        position: relative;
+    }
+    .timeline-dot {
+        position: absolute;
+        left: -14px;
+        top: 6px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 0 0 3px #bbb;
+    }
+    .timeline-date {
+        font-size: 0.85em;
+        color: gray;
+    }
+    .timeline-title {
+        font-weight: bold;
+    }
+    .extra-info {
+        font-size: 0.85em;
+        color: #444;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Render timeline
+    st.markdown('<div class="timeline">', unsafe_allow_html=True)
+    for _, row in df.iterrows():
+        st.markdown(f"""
+        <div class="timeline-item">
+            <div class="timeline-dot" style="background-color: {row['color']};"></div>
+            <div class="timeline-title">{row['type']}</div>
+            <div class="timeline-date">{row['date'].strftime('%b %d, %Y')}</div>
+            <div>{row['description']}</div>
+            <div class="extra-info"><strong>Category:</strong> {row['category']}</div>
+            <div class="extra-info"><strong>Notes:</strong> {row['notes']}</div>
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 else:
-    st.info("You have no milestones yet.")
+    st.info("No milestones or goals to display yet.")
 
 if st.button("⬅ Back to Home"):
     st.switch_page("Home.py")

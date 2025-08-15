@@ -17,7 +17,7 @@ def AboutPageNav():
 #### ------------------------ Examples for Role ------------------------
 def MatthewBonesNav():
     st.sidebar.page_link(
-        "pages/05_Matthew_Bones_home.py", label="Premium Home", icon="👤"
+        "pages/05_Matthew_Bones_home.py", label="Home", icon="👤",
     )
 
 
@@ -29,13 +29,13 @@ def MilestonesAndGoalsNav():
 
 def EmmaSmithNav():
     st.sidebar.page_link(
-        "03_Emma_Smith_home", label="Casual Gamer Home", icon="👤"
+        "03_Emma_Smith_home", label="Home", icon="👤"
     )
 
 
 def KaiNguyenNav():
     st.sidebar.page_link(
-        "pages/04_Kai_Nguyen_home.py", label="Pro Gamer Home", icon="👤"
+        "pages/04_Kai_Nguyen_home.py", label="Home", icon="👤"
     )
 
 
@@ -45,8 +45,6 @@ def JordanLeeNav():
     )
 
 
-
-## ------------------------ Examples for Role of usaid_worker ------------------------
 def ApiTestNav():
     st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
 
@@ -62,13 +60,6 @@ def ClassificationNav():
         "pages/13_Classification.py", label="Classification Demo", icon="🌺"
     )
 
-
-def NgoDirectoryNav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
-
-
-def AddNgoNav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
 
 
 #### ------------------------ System Admin Role ------------------------
@@ -102,6 +93,10 @@ def SideBarLinks(show_home=False):
 
         if st.session_state["role"] == "data_analyst":
             MatthewBonesNav()
+            MilestonesAndGoalsNav()
+
+        if st.session_state["role"] == "pro_gamer":
+            KaiNguyenNav()
             MilestonesAndGoalsNav()
 
         # If the user is an administrator, give them access to the administrator pages

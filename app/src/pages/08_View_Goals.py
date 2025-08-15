@@ -33,6 +33,16 @@ st.write(f"Goals for {st.session_state['username']}:")
 goals = get_goals(profile_id)
 if goals:
     df = pd.DataFrame(goals)
+
+    # Keep only the desired columns
+    columns_to_show = ['description', 'dateCreated', 'dateAchieved']
+    df = df[[col for col in columns_to_show if col in df.columns]]
+
+    # Convert date columns to readable format
+    for date_col in ['dateCreated', 'dateAchieved']:
+        if date_col in df.columns:
+            df[date_col] = pd.to_datetime(df[date_col], errors='coerce').dt.strftime('%b %d, %Y')
+
     st.table(df)
 else:
     st.info("You have no goals yet!")
