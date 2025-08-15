@@ -1,4 +1,5 @@
 import logging
+import requests
 import streamlit as st
 from modules.nav import SideBarLinks
 
@@ -9,22 +10,34 @@ if "profileID" not in st.session_state:
     st.error("Please log in to continue.")
     st.stop()
 
+API_BASE_URL = "http://web-api:4000"
+
 is_premium = st.session_state.get('isPremium', True)
 username = st.session_state['username']
 profile_id = st.session_state['profileID']
 
+# --- Data Fetching Functions ---
 @st.cache_data
 def get_user_games(profile_id):
     """Fetches all games associated with a user's profile."""
     try:
-        # REPLACE WITH DB CALL
-        return [
-            {'gameID': 1, 'name': 'Valorant'},
-            {'gameID': 2, 'name': 'Counter-Strike 2'}
-        ]
+        response_linked = requests.get(f"{API_BASE_URL}/games/profile/{profile_id}")
+        response_linked.raise_for_status()
+        linked_games = response_linked.json()
+        return linked_games
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching games: {e}")
         return []
+
+def unlink_game(profile_id, game_id):
+    """Sends a DELETE request to unlink a game from the user's profile."""
+    try:
+        response = requests.delete(f"{API_BASE_URL}/games/profile/{profile_id}/{game_id}")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error unlinking game: {e}")
+        return None
 
 # Show sidebar links for the current user
 SideBarLinks()
