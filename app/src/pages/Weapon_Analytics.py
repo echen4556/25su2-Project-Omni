@@ -5,7 +5,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-API_BASE_URL = 'http://api:4000'
+API_BASE_URL = "http://host.docker.internal:4000"
+
+profile_id = st.session_state['profileID']
+selected_game_id = st.session_state['selected_game_id']
+selected_game_name = st.session_state['selected_game_name']
+username = st.session_state['viewing_profile_name']
+
 
 # A helper function to fetch a list of games for the current user
 def get_user_games(profile_id):
