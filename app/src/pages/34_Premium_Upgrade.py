@@ -4,7 +4,7 @@ st.set_page_config(layout="wide")
 st.title("💎 Premium Upgrade")
 
 # Check if already premium
-is_premium = st.session_state.get('is_premium', False)
+is_premium = st.session_state.get('isPremium', False)
 
 # Premium info section
 if not is_premium:
@@ -17,7 +17,7 @@ if not is_premium:
     """)
 
     if st.button("💳 Upgrade to Premium"):
-        st.session_state['is_premium'] = True
+        st.session_state['isPremium'] = True
         st.success("🎉 Upgrade successful! You now have Premium access.")
 
 # Back button goes to Emma's home page

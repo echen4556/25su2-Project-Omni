@@ -28,7 +28,7 @@ if st.button('🎯 View All Milestones',
 if st.button('➕ Add New Milestone',
              type='secondary',
              use_container_width=True):
-    st.switch_page('pages/07_Add_Milestone.py')
+    st.switch_page('pages/07_Add_Milestones.py')
 
 st.write('---')  # Separator line
 
