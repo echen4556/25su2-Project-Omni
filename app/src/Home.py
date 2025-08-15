@@ -59,6 +59,7 @@ if st.button('Act as Matthew Bones, a Data Analyst for Team Liquid',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'data_analyst'
     st.session_state['username'] = 'Matthew'
+    st.session_state['profileID'] = 2
     st.switch_page('pages/05_Matthew_Bones_home.py')
 
 if st.button('Act as Kai Nguyen, a Pro Gamer', 

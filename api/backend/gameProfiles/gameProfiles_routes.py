@@ -72,3 +72,20 @@ def hide_game_profile(gameInstanceID):
     ''', (gameInstanceID,))
     db.get_db().commit()
     return jsonify({"message": "Game profile hidden from dashboard!"}), 200
+
+# GET all games linked to a specific profile
+@game_profiles_bp.route('/games/profile/<int:profileID>', methods=['GET'])
+def get_games_for_profile(profileID):
+    current_app.logger.info(f'GET /games/profile/{profileID}')
+    cursor = db.get_db().cursor()
+    # Join with the games table to get the game names directly
+    query = '''
+        SELECT g.gameID, g.name
+        FROM games g
+        JOIN gamesProfiles gp ON g.gameID = gp.gameID
+        WHERE gp.profileID = %s
+    '''
+    cursor.execute(query, (profileID,))
+    data = cursor.fetchall()
+    return make_response(jsonify(data), 200)
+
