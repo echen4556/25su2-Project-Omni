@@ -70,6 +70,8 @@ if st.button('Act as Kai Nguyen, a Pro Gamer',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'pro_gamer'
     st.session_state['username'] = 'Kai'
+    st.session_state['profileID'] = 9
+    st.session_state['isPremium'] = True
     st.switch_page('pages/04_Kai_Nguyen_home.py')
 
 if st.button('Act as Jordan Lee, a System Administrator', 
