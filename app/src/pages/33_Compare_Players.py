@@ -12,18 +12,16 @@ logger = logging.getLogger(__name__)
 st.set_page_config(layout='wide')
 SideBarLinks()
 
-API_BASE_URL = "http://host.docker.internal:4000"
+# Use the correct service name for Docker networking
+API_BASE_URL = "http://api:4000"
 
 # -------------------------------
-# Ensure user is logged in
+# Ensure user is logged in and has data
 # -------------------------------
 if 'username' not in st.session_state:
     st.error("You must be logged in to view this page.")
     st.stop()
 
-# -------------------------------
-# Ensure comparison data exists
-# -------------------------------
 if "compare" not in st.session_state:
     st.warning("No players selected to compare. Go back to selection page.")
     st.stop()
@@ -31,6 +29,7 @@ if "compare" not in st.session_state:
 compare = st.session_state['compare']
 player1_name = compare['player1_name']
 player2_name = compare['player2_name']
+game_id = compare['game_id']
 game_name = compare['game_name']
 show_maps_weapons = compare['show_maps_weapons']
 
@@ -38,51 +37,43 @@ show_maps_weapons = compare['show_maps_weapons']
 # Cached API helpers
 # -------------------------------
 @st.cache_data
-def get_profile_by_username(username: str):
+def get_profile_id(username: str):
+    """Fetches the profileID for a given username."""
     try:
         resp = requests.get(f"{API_BASE_URL}/profiles")
         resp.raise_for_status()
         profiles = resp.json()
-        return next((p for p in profiles if p['username'] == username), None)
+        profile = next((p for p in profiles if p['username'] == username), None)
+        return profile['profileID'] if profile else None
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching profile for {username}: {e}")
         return None
 
 @st.cache_data
-def get_game_profile(profile_id: int):
-    try:
-        resp = requests.get(f"{API_BASE_URL}/gamesProfiles/{profile_id}")
-        resp.raise_for_status()
-        game_profiles = resp.json()
-        return game_profiles
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching game profile for profile {profile_id}: {e}")
-        return None
-
-@st.cache_data
 def get_player_stats(profile_id: int, game_id: int):
+    """Fetches summary stats for a player in a game."""
     try:
-        resp = requests.get(f"{API_BASE_URL}/playerStats/{profile_id}/{game_id}")
+        resp = requests.get(f"{API_BASE_URL}/playerstats/summary/{profile_id}/{game_id}")
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.RequestException:
         return {}
 
 @st.cache_data
-def get_maps(game_id: int, profile_id: int = None):
+def get_maps_stats(profile_id: int, game_id: int):
+    """Fetches map stats for a player in a game."""
     try:
-        url = f"{API_BASE_URL}/maps/{game_id}/{profile_id}" if profile_id else f"{API_BASE_URL}/maps/{game_id}"
-        resp = requests.get(url)
+        resp = requests.get(f"{API_BASE_URL}/playerstats/map/{profile_id}/{game_id}")
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.RequestException:
         return []
 
 @st.cache_data
-def get_weapons(game_id: int, profile_id: int = None):
+def get_weapons_stats(profile_id: int, game_id: int):
+    """Fetches weapon stats for a player in a game."""
     try:
-        url = f"{API_BASE_URL}/weapons/{game_id}/{profile_id}" if profile_id else f"{API_BASE_URL}/weapons/{game_id}"
-        resp = requests.get(url)
+        resp = requests.get(f"{API_BASE_URL}/playerstats/weapon/{profile_id}/{game_id}")
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.RequestException:
@@ -91,31 +82,15 @@ def get_weapons(game_id: int, profile_id: int = None):
 # -------------------------------
 # Fetch data for both players
 # -------------------------------
-player_data = {}
-for pname in [player1_name, player2_name]:
-    profile = get_profile_by_username(pname)
-    if not profile:
-        st.error(f"No profile found for {pname}")
-        st.stop()
+player1_id = get_profile_id(player1_name)
+player2_id = get_profile_id(player2_name)
 
-    game_profile = get_game_profile(profile['profileID'])
-    if not game_profile:
-        st.error(f"{pname} does not have a profile for {game_name}")
-        st.stop()
+if not player1_id or not player2_id:
+    st.error("Could not find a profile for one or both players.")
+    st.stop()
 
-    stats = get_player_stats(profile['profileID'], game_profile)
-    maps, weapons = [], []
-
-    if profile.get('isPremium', False) and show_maps_weapons:
-        maps = get_maps(game_profile['game_id'], profile['profileID'])
-        weapons = get_weapons(game_profile['game_id'], profile['profileID'])
-
-    player_data[pname] = {
-        "stats": stats,
-        "isPremium": profile.get('isPremium', False),
-        "maps": maps,
-        "weapons": weapons
-    }
+player1_stats = get_player_stats(player1_id, game_id)
+player2_stats = get_player_stats(player2_id, game_id)
 
 # -------------------------------
 # Display comparison
@@ -123,36 +98,108 @@ for pname in [player1_name, player2_name]:
 st.title(f"📊 Comparing {player1_name} vs {player2_name}")
 st.subheader(f"Game: {game_name}")
 
-col1, col2 = st.columns(2)
-for col, pname in zip([col1, col2], [player1_name, player2_name]):
-    pdata = player_data[pname]
-    with col:
-        st.markdown(f"### {pname}")
+# --- Combined Core Stats Table ---
+if player1_stats and player2_stats:
+    # Remove unwanted IDs before processing
+    player1_stats.pop('statTableID', None)
+    player1_stats.pop('gameInstanceID', None)
+    player2_stats.pop('statTableID', None)
+    player2_stats.pop('gameInstanceID', None)
 
-        # Core stats
-        if pdata['stats']:
-            stats_df = pd.DataFrame(list(pdata['stats'].items()), columns=["Stat", "Value"])
-            st.table(stats_df)
-        else:
-            st.info("No stats available.")
+    # Define which stats are better when higher
+    higher_is_better = ['kills', 'assists', 'totalDamage', 'totalHeadshots', 'totalShotsHit', 'totalWins']
 
-        # Premium maps & weapons
-        if pdata['isPremium'] and show_maps_weapons:
-            st.success("Premium: Maps & Weapons Stats")
+    # Convert stats to pandas Series for easier comparison
+    p1_series = pd.Series(player1_stats, name=player1_name)
+    p2_series = pd.Series(player2_stats, name=player2_name)
 
-            if pdata['maps']:
-                st.write("**Maps:**")
-                st.table(pd.DataFrame(pdata['maps']))
+    # Combine into a single DataFrame
+    stats_df = pd.concat([p1_series, p2_series], axis=1)
+
+    # Calculate the comparison arrow
+    comparison = []
+    for stat, values in stats_df.iterrows():
+        p1_val = values[player1_name]
+        p2_val = values[player2_name]
+
+        if p1_val == p2_val:
+            comparison.append("➖")
+            continue
+
+        # Check if higher is better for this stat
+        if stat in higher_is_better:
+            if p1_val > p2_val:
+                comparison.append("⬅️")
             else:
-                st.write("No map data available.")
-
-            if pdata['weapons']:
-                st.write("**Weapons:**")
-                st.table(pd.DataFrame(pdata['weapons']))
-            else:
-                st.write("No weapon data available.")
+                comparison.append("➡️")
+        # For stats where lower is better (like 'deaths')
         else:
-            st.info("Maps and weapons stats are hidden (premium only).")
+            if p1_val < p2_val:
+                comparison.append("⬅️")
+            else:
+                comparison.append("➡️")
+
+    stats_df.insert(1, '🆚', comparison)
+
+    st.subheader("Overall Performance")
+
+    # Create headers with custom widths for a balanced look
+    header_cols = st.columns([2, 3, 1, 3])
+    header_cols[0].markdown("**Stat**")
+    header_cols[1].markdown(f"<div style='text-align: center;'><b>{player1_name}</b></div>", unsafe_allow_html=True)
+    header_cols[3].markdown(f"<div style='text-align: center;'><b>{player2_name}</b></div>", unsafe_allow_html=True)
+    st.divider()
+
+    # Iterate over the DataFrame to display rows with custom widths
+    for index, row in stats_df.iterrows():
+        row_cols = st.columns([2, 3, 1, 3])
+        # Use index for the stat name, which is more robust
+        row_cols[0].write(str(index).replace('_', ' ').title())
+        row_cols[1].markdown(f"<div style='text-align: center;'>{str(row[player1_name])}</div>", unsafe_allow_html=True)
+        row_cols[2].markdown(f"<div style='text-align: center;'>{row['🆚']}</div>", unsafe_allow_html=True)
+        row_cols[3].markdown(f"<div style='text-align: center;'>{str(row[player2_name])}</div>", unsafe_allow_html=True)
+
+else:
+    st.info("No summary stats available for one or both players to compare.")
+
+st.divider()
+
+# --- Premium Maps & Weapons (in separate columns) ---
+if show_maps_weapons:
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"### {player1_name}'s Maps & Weapons")
+        maps1_df = pd.DataFrame(get_maps_stats(player1_id, game_id))
+        weapons1_df = pd.DataFrame(get_weapons_stats(player1_id, game_id))
+
+        # Drop unwanted columns if they exist
+        if not maps1_df.empty:
+            maps1_df = maps1_df.drop(columns=['statTableID'], errors='ignore')
+        if not weapons1_df.empty:
+            weapons1_df = weapons1_df.drop(columns=['statTableID'], errors='ignore')
+
+        st.write("**Maps:**")
+        st.table(maps1_df)
+        st.write("**Weapons:**")
+        st.table(weapons1_df)
+
+    with col2:
+        st.markdown(f"### {player2_name}'s Maps & Weapons")
+        maps2_df = pd.DataFrame(get_maps_stats(player2_id, game_id))
+        weapons2_df = pd.DataFrame(get_weapons_stats(player2_id, game_id))
+
+        # Drop unwanted columns if they exist
+        if not maps2_df.empty:
+            maps2_df = maps2_df.drop(columns=['statTableID'], errors='ignore')
+        if not weapons2_df.empty:
+            weapons2_df = weapons2_df.drop(columns=['statTableID'], errors='ignore')
+
+        st.write("**Maps:**")
+        st.table(maps2_df)
+        st.write("**Weapons:**")
+        st.table(weapons2_df)
+else:
+    st.info("Maps and weapons stats are hidden (premium only).")
 
 # -------------------------------
 # Back button
