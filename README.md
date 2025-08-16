@@ -11,7 +11,7 @@ The application is built using **Python, Streamlit, MySQL**, and **Docker** for 
 ---
 
 ## Link to Video
-
+https://youtu.be/1Tm40zkdA8w 
 
 
 ## Team Members
