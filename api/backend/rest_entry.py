@@ -59,7 +59,7 @@ def create_app():
     app.register_blueprint(goals_bp)
     app.register_blueprint(milestones)
     app.register_blueprint(maps, url_prefix="/maps")
-    app.register_blueprint(profiles, url_prefix="/profiles")
+    app.register_blueprint(profiles)
     app.register_blueprint(weapons, url_prefix="/weapons")
     app.register_blueprint(matches_bp, url_prefix="/matches")
 

@@ -234,11 +234,11 @@ VALUES
 
 -- ====== BASE TABLES ======
 -- PROFILES (role management via isAdmin/isPremium/isPublic)
-INSERT INTO profiles (profileID, username, isAdmin, isPublic, isPremium, password) VALUES
-  (10, 'jordan_lee', 1, 1, 1, 'hashed_pw_jordan'), -- admin, public, premium
-  (11, 'mod_kim',     1, 1, 0, 'hashed_pw_kim'), -- admin, public
-  (12, 'analyst_ryu', 0, 1, 0, 'hashed_pw_ryu'), -- public
-  (13, 'viewer_amy',  0, 1, 0, 'hashed_pw_amy'); -- public
+INSERT INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
+  ('jordan_lee', 1, 1, 1, 'hashed_pw_jordan'), -- admin, public, premium
+  ('mod_kim',     1, 1, 0, 'hashed_pw_kim'), -- admin, public
+  ('analyst_ryu', 0, 1, 0, 'hashed_pw_ryu'), -- public
+  ('viewer_amy',  0, 1, 0, 'hashed_pw_amy'); -- public
 
 -- GAMES 
 INSERT IGNORE INTO games (gameID, name) VALUES
@@ -318,36 +318,36 @@ INSERT INTO matchStats (matchStatsID, matchID, gameInstanceID, kills, deaths, as
 
 
 INSERT INTO profiles (profileID, username, isAdmin, isPublic, isPremium, password) VALUES
-(43, 'AlexTurner', FALSE, TRUE, TRUE, 'pass123'),
-(14, 'MiaCruz', FALSE, TRUE, FALSE, 'pass123'),
-(15, 'TheNightFury', TRUE, TRUE, TRUE, 'pass123'),
-(16, 'Liam_W', FALSE, TRUE, TRUE, 'pass123'),
-(17, 'EpicGamer22', FALSE, TRUE, FALSE, 'pass123'),
-(18, 'ZoeChen', TRUE, TRUE, FALSE, 'pass123'),
-(19, 'CyberGhost', FALSE, TRUE, TRUE, 'pass123'),
-(20, 'OliverStone', FALSE, TRUE, FALSE, 'pass123'),
-(21, 'Luna_Blaze', FALSE, TRUE, TRUE, 'pass123'),
-(22, 'FinnDavis', FALSE, TRUE, FALSE, 'pass123'),
-(23, 'NinjaShark', TRUE, TRUE, TRUE, 'pass123'),
-(24, 'ChloePrice', FALSE, TRUE, FALSE, 'pass123'),
-(25, 'PixelKnight', FALSE, TRUE, TRUE, 'pass123'),
-(26, 'Sam_Rivera', FALSE, TRUE, FALSE, 'pass123'),
-(27, 'CosmicEcho', FALSE, TRUE, TRUE, 'pass123'),
-(28, 'AvaJones', TRUE, TRUE, FALSE, 'pass123'),
-(29, 'Silent_Sniper', FALSE, TRUE, FALSE, 'pass123'),
-(30, 'EthanBaker', FALSE, TRUE, TRUE, 'pass123'),
-(31, 'VortexViper', FALSE, TRUE, FALSE, 'pass123'),
-(32, 'IslaGray', TRUE, TRUE, TRUE, 'pass123'),
-(33, 'DragonSlayer99', FALSE, TRUE, TRUE, 'pass123'),
-(34, 'NoahFoster', FALSE, TRUE, FALSE, 'pass123'),
-(35, 'ShadowStalker', FALSE, TRUE, TRUE, 'pass123'),
-(36, 'LilyAdams', FALSE, TRUE, FALSE, 'pass123'),
-(37, 'RogueOne', TRUE, TRUE, TRUE, 'pass123'),
-(38, 'JackHarper', FALSE, TRUE, TRUE, 'pass123'),
-(39, 'SolarFlare', FALSE, TRUE, FALSE, 'pass123'),
-(40, 'GraceLee', FALSE, TRUE, TRUE, 'pass123'),
-(41, 'Nightshade_Op', TRUE, TRUE, FALSE, 'pass123'),
-(42, 'RyanMurphy', FALSE, TRUE, TRUE, 'pass123');
+('AlexTurner', FALSE, TRUE, TRUE, 'pass123'),
+('MiaCruz', FALSE, TRUE, FALSE, 'pass123'),
+('TheNightFury', TRUE, TRUE, TRUE, 'pass123'),
+('Liam_W', FALSE, TRUE, TRUE, 'pass123'),
+('EpicGamer22', FALSE, TRUE, FALSE, 'pass123'),
+('ZoeChen', TRUE, TRUE, FALSE, 'pass123'),
+('CyberGhost', FALSE, TRUE, TRUE, 'pass123'),
+('OliverStone', FALSE, TRUE, FALSE, 'pass123'),
+('Luna_Blaze', FALSE, TRUE, TRUE, 'pass123'),
+('FinnDavis', FALSE, TRUE, FALSE, 'pass123'),
+('NinjaShark', TRUE, TRUE, TRUE, 'pass123'),
+('ChloePrice', FALSE, TRUE, FALSE, 'pass123'),
+('PixelKnight', FALSE, TRUE, TRUE, 'pass123'),
+('Sam_Rivera', FALSE, TRUE, FALSE, 'pass123'),
+('CosmicEcho', FALSE, TRUE, TRUE, 'pass123'),
+('AvaJones', TRUE, TRUE, FALSE, 'pass123'),
+('Silent_Sniper', FALSE, TRUE, FALSE, 'pass123'),
+('EthanBaker', FALSE, TRUE, TRUE, 'pass123'),
+('VortexViper', FALSE, TRUE, FALSE, 'pass123'),
+('IslaGray', TRUE, TRUE, TRUE, 'pass123'),
+('DragonSlayer99', FALSE, TRUE, TRUE, 'pass123'),
+('NoahFoster', FALSE, TRUE, FALSE, 'pass123'),
+('ShadowStalker', FALSE, TRUE, TRUE, 'pass123'),
+('LilyAdams', FALSE, TRUE, FALSE, 'pass123'),
+('RogueOne', TRUE, TRUE, TRUE, 'pass123'),
+('JackHarper', FALSE, TRUE, TRUE, 'pass123'),
+('SolarFlare', FALSE, TRUE, FALSE, 'pass123'),
+('GraceLee', FALSE, TRUE, TRUE, 'pass123'),
+('Nightshade_Op', TRUE, TRUE, FALSE, 'pass123'),
+('RyanMurphy', FALSE, TRUE, TRUE, 'pass123');
 
 INSERT IGNORE INTO gamesProfiles (gameInstanceID, gameID, profileID, gameUsername, showOnDashboard) VALUES
 (3001, 23, 37, 'RogueOne_GP_3001', 1),
