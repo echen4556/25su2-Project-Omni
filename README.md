@@ -91,6 +91,8 @@ Due to initial project time constraints, the core functionality for managing goa
 - **Progress Tracking:** Future updates will include a more robust system for tracking and visualizing the progress of each goal.
 - **Intuitive UI:** An interactive user interface will be developed to make the process of creating and managing goals and milestones seamless and efficient.
 
+Video Link: https://youtu.be/1Tm40zkdA8w
+
 
 
 

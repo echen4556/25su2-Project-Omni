@@ -1,87 +1,49 @@
-from flask import Blueprint, request, jsonify, current_app
-from backend.db_connection import db  
+from flask import Blueprint, jsonify, make_response, current_app
+from backend.db_connection import db
+# Import the dictionary cursor
+from pymysql.cursors import DictCursor
 
-matches_bp = Blueprint('matches', __name__)
+# Create a new blueprint for match-related routes
+matches_bp = Blueprint('matches_bp', __name__)
 
-# Get ALL matches for a specific profile + gameInstance with optional filters
-@matches_bp.route('/profile/<int:profile_id>/games/<int:game_instance_id>/matches', methods=['GET'])
-def get_all_matches(profile_id, game_instance_id):
-    """
-    Returns all matches for a given profile and game instance.
-    Supports optional filtering via query params: matchType, rank, startDate, endDate.
-    """
-    try:
-        cursor = db.get_db().cursor(dictionary=True)
+# This route gets all match history for a SPECIFIC USER across all games
+@matches_bp.route('/profile/<int:profileID>', methods=['GET'])
+def get_all_match_history_for_user(profileID):
+    current_app.logger.info(f'GET /matches/profile/{profileID}')
+    cursor = db.get_db().cursor(cursor=DictCursor)
 
-        # Base query
-        query = """
-        SELECT m.matchID, m.matchDate, m.matchType, m.lobbyRank, mp.Name AS mapName
-        FROM matches m
-        JOIN matchStats ms ON m.matchID = ms.matchID
-        JOIN map mp ON m.mapID = mp.mapID
-        WHERE ms.gameInstanceID = %s
-        """
-        params = [game_instance_id]
-
-        # Optional filters
-        match_type = request.args.get('matchType')
-        rank = request.args.get('rank')
-        start_date = request.args.get('startDate')
-        end_date = request.args.get('endDate')
-
-        if match_type:
-            query += " AND m.matchType = %s"
-            params.append(match_type)
-
-        if rank:
-            query += " AND m.lobbyRank = %s"
-            params.append(rank)
-
-        if start_date:
-            query += " AND m.matchDate >= %s"
-            params.append(start_date)
-
-        if end_date:
-            query += " AND m.matchDate <= %s"
-            params.append(end_date)
-
-        query += " ORDER BY m.matchDate DESC"
-
-        cursor.execute(query, tuple(params))
-        matches = cursor.fetchall()
-
-        return jsonify(matches), 200
-
-    except Exception as e:
-        current_app.logger.error(f"Error fetching matches: {e}")
-        return jsonify({"error": str(e)}), 500
-
-
-# Get DETAILS for a specific match for a profile
-@matches_bp.route('/matches/<int:match_id>/<int:profile_id>', methods=['GET'])
-def get_match_details(match_id, profile_id):
-    """
-    Returns detailed stats for a given match for a specific profile.
-    """
-    try:
-        cursor = db.get_db().cursor(dictionary=True)
-
-        query = """
-        SELECT ms.kills, ms.deaths, ms.assists, ms.Headshots AS headshots, 
-               ms.damageDealt AS damage, ms.TotalShots, ms.shotsHit, 
-               ms.matchDuration, ms.rounds, ms.win, ms.firstBloods
+    # This query joins all necessary tables to gather full match details for one user
+    query = '''
+        SELECT
+            m.matchID,
+            m.matchDate,
+            m.matchType,
+            m.lobbyRank,
+            g.name AS gameName,
+            `map`.Name AS mapName,
+            ms.kills,
+            ms.deaths,
+            ms.assists,
+            ms.Headshots AS headshots,
+            ms.damageDealt AS damage,
+            ms.rounds,
+            ms.matchDuration,
+            ms.win
         FROM matchStats ms
         JOIN gamesProfiles gp ON ms.gameInstanceID = gp.gameInstanceID
-        WHERE ms.matchID = %s AND gp.profileID = %s
-        """
-        cursor.execute(query, (match_id, profile_id))
-        details = cursor.fetchone()
+        JOIN matches m ON ms.matchID = m.matchID
+        JOIN `map` ON m.mapID = `map`.mapID
+        JOIN games g ON m.gameID = g.gameID
+        WHERE
+            gp.profileID = %s
+        ORDER BY
+            m.matchDate DESC;
+    '''
 
-        if details:
-            return jsonify(details), 200
-        else:
-            return jsonify({"message": "No stats found for this match/profile"}), 404
-
+    try:
+        cursor.execute(query, (profileID,))
+        data = cursor.fetchall()
+        return make_response(jsonify(data), 200)
     except Exception as e:
-        current_app.logger.error(f"Error fetching match details: {e}")
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.error(f"Error fetching user match history: {e}")
+        return make_response(jsonify({"error": "Failed to fetch user match history"}), 500)
