@@ -24,18 +24,18 @@ def get_profile(profileID):
         return jsonify({'error': 'profile not found'}), 404
     return jsonify(row), 200
 
-# -------------------------------
-# GET games for a profile
-# -------------------------------
 @profiles.route('/profiles/<int:profileID>/games', methods=['GET'])
 def get_user_games_route(profileID):
     current_app.logger.info(f'GET /profiles/{profileID}/games')
-    cursor = db.get_db().cursor()
+    cursor = db.get_db().cursor()  # ensure dict rows
     cursor.execute(
-        'SELECT t2.gameID, t2.name FROM gamesProfiles t1 JOIN games t2 ON t1.gameID = t2.gameID WHERE t1.profileID = %s',
+        '''
+        SELECT t2.gameID, t2.name
+        FROM gamesProfiles t1
+        JOIN games t2 ON t1.gameID = t2.gameID
+        WHERE t1.profileID = %s
+        ''',
         (profileID,)
     )
-    rows = cursor.fetchall()
-    columns = ['gameID', 'name']
-    data = [dict(zip(columns, row)) for row in rows]
-    return jsonify(data), 200
+    games = cursor.fetchall()
+    return jsonify(games), 200

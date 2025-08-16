@@ -1,10 +1,10 @@
 import logging
-logger = logging.getLogger(__name__)
-
 import streamlit as st
 import requests
 import pandas as pd
 from modules.nav import SideBarLinks
+
+logger = logging.getLogger(__name__)
 
 # -------------------------------
 # Page setup
@@ -12,7 +12,7 @@ from modules.nav import SideBarLinks
 st.set_page_config(layout='wide')
 SideBarLinks()
 
-API_BASE_URL = "http://host.docker.internal:4000" 
+API_BASE_URL = "http://host.docker.internal:4000"
 
 # -------------------------------
 # Ensure user is logged in
@@ -35,43 +35,32 @@ game_name = compare['game_name']
 show_maps_weapons = compare['show_maps_weapons']
 
 # -------------------------------
-# Cached API calls
+# Cached API helpers
 # -------------------------------
 @st.cache_data
-def get_profile(username, game_name):
-    """Fetch profile info for a username and game"""
+def get_profile_by_username(username: str):
     try:
-        resp = requests.get(f"{API_BASE_URL}/profile")
+        resp = requests.get(f"{API_BASE_URL}/profiles")
         resp.raise_for_status()
         profiles = resp.json()
-        profile = next((p for p in profiles if p['username'] == username), None)
-        if not profile:
-            return None
-
-        profile_id = profile['profileID']
-
-        # Get gameProfiles for this profile
-        resp = requests.get(f"{API_BASE_URL}/profiles/{profile_id}/gameProfiles")
-        resp.raise_for_status()
-        game_profiles = resp.json()
-        game_instance = next((g for g in game_profiles if g['game_name'] == game_name), None)
-        if not game_instance:
-            return None
-
-        return {
-            "username": username,
-            "isPremium": profile.get('isPremium', False),
-            "profile_id": profile_id,
-            "game_id": game_instance['game_id']
-        }
-
+        return next((p for p in profiles if p['username'] == username), None)
     except requests.exceptions.RequestException as e:
-        st.error(f"Failed to fetch profile for {username}: {e}")
+        st.error(f"Error fetching profile for {username}: {e}")
         return None
 
 @st.cache_data
-def get_player_stats(profile_id, game_id):
-    """Fetch player stats for a specific profile/game"""
+def get_game_profile(profile_id: int):
+    try:
+        resp = requests.get(f"{API_BASE_URL}/gamesProfiles/{profile_id}")
+        resp.raise_for_status()
+        game_profiles = resp.json()
+        return game_profiles
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching game profile for profile {profile_id}: {e}")
+        return None
+
+@st.cache_data
+def get_player_stats(profile_id: int, game_id: int):
     try:
         resp = requests.get(f"{API_BASE_URL}/playerStats/{profile_id}/{game_id}")
         resp.raise_for_status()
@@ -80,51 +69,50 @@ def get_player_stats(profile_id, game_id):
         return {}
 
 @st.cache_data
-def get_maps(game_id, profile_id=None):
-    """Fetch maps (general or player-specific)."""
+def get_maps(game_id: int, profile_id: int = None):
     try:
-        if profile_id:
-            resp = requests.get(f"{API_BASE_URL}/maps/{game_id}/{profile_id}")
-        else:
-            resp = requests.get(f"{API_BASE_URL}/maps/{game_id}")
+        url = f"{API_BASE_URL}/maps/{game_id}/{profile_id}" if profile_id else f"{API_BASE_URL}/maps/{game_id}"
+        resp = requests.get(url)
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.RequestException:
         return []
 
 @st.cache_data
-def get_weapons(game_id, profile_id=None):
-    """Fetch weapons (general or player-specific)."""
+def get_weapons(game_id: int, profile_id: int = None):
     try:
-        if profile_id:
-            resp = requests.get(f"{API_BASE_URL}/weapons/{game_id}/{profile_id}")
-        else:
-            resp = requests.get(f"{API_BASE_URL}/weapons/{game_id}")
+        url = f"{API_BASE_URL}/weapons/{game_id}/{profile_id}" if profile_id else f"{API_BASE_URL}/weapons/{game_id}"
+        resp = requests.get(url)
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.RequestException:
         return []
 
 # -------------------------------
-# Gather data for both players
+# Fetch data for both players
 # -------------------------------
 player_data = {}
 for pname in [player1_name, player2_name]:
-    profile = get_profile(pname, game_name)
+    profile = get_profile_by_username(pname)
     if not profile:
-        st.error(f"No profile found for {pname} in {game_name}")
+        st.error(f"No profile found for {pname}")
         st.stop()
 
-    stats = get_player_stats(profile['profile_id'], profile['game_id'])
+    game_profile = get_game_profile(profile['profileID'])
+    if not game_profile:
+        st.error(f"{pname} does not have a profile for {game_name}")
+        st.stop()
 
-    maps, weapons = ([], [])
-    if profile['isPremium'] and show_maps_weapons:
-        maps = get_maps(profile['game_id'], profile['profile_id'])
-        weapons = get_weapons(profile['game_id'], profile['profile_id'])
+    stats = get_player_stats(profile['profileID'], game_profile)
+    maps, weapons = [], []
+
+    if profile.get('isPremium', False) and show_maps_weapons:
+        maps = get_maps(game_profile['game_id'], profile['profileID'])
+        weapons = get_weapons(game_profile['game_id'], profile['profileID'])
 
     player_data[pname] = {
         "stats": stats,
-        "isPremium": profile['isPremium'],
+        "isPremium": profile.get('isPremium', False),
         "maps": maps,
         "weapons": weapons
     }
@@ -143,10 +131,7 @@ for col, pname in zip([col1, col2], [player1_name, player2_name]):
 
         # Core stats
         if pdata['stats']:
-            stats_df = pd.DataFrame(
-                list(pdata['stats'].items()),
-                columns=["Stat", "Value"]
-            )
+            stats_df = pd.DataFrame(list(pdata['stats'].items()), columns=["Stat", "Value"])
             st.table(stats_df)
         else:
             st.info("No stats available.")
