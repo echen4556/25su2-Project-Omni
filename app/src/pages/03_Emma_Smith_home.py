@@ -70,12 +70,6 @@ if games_list:
                 st.session_state['selected_game_name'] = game_name
                 st.session_state['viewing_profile_name'] = username
                 st.switch_page("pages/31_View_Stats.py")
-            if st.button(f"📜 View {game_name} Match History", key=f"match_history_{game_id}", use_container_width=True):
-                st.session_state['selected_game_id'] = game_id
-                st.session_state['selected_game_name'] = game_name
-                st.session_state['viewing_profile_name'] = username
-                st.switch_page("pages/match_history.py")
-
 
         with col2:
             if st.button("🗑️ Remove", key=f"remove_{game_id}", use_container_width=True):
@@ -115,14 +109,8 @@ st.divider()
 # --- Other Navigation Buttons ---
 st.subheader("Tools & Features")
 
-if is_premium:
-    if st.button('🔫 Weapon Analytics', use_container_width=True):
-        st.switch_page('weapon_analytics')
-    if st.button('🗺️ Map Insights', use_container_width=True):
-        st.switch_page('map_insights')
-else:
-    if st.button('💎 Upgrade to Premium', type='secondary', use_container_width=True):
-        st.switch_page('pages/34_Premium_Upgrade.py')
-
-if st.button('🤝 Compare Players', type='primary', use_container_width=True):
+if st.button('🤝 Compare Players', use_container_width=True):
     st.switch_page('pages/32_Select_Players.py')
+
+if st.button(f"📜 View Match History",  use_container_width=True):
+                st.switch_page("pages/match_history.py")
