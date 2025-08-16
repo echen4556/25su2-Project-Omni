@@ -16,10 +16,10 @@ st.title("Player Search")
 # ---------- API roots & endpoints ----------
 API_ROOT = os.getenv("API_ROOT", "http://web-api:4000").rstrip("/")
 
-# profiles blueprint has prefix + absolute routes -> /profiles/profiles [...]
-PROFILES_URL   = f"{API_ROOT}/profiles/profiles"                        # list all profiles
-PROFILE_PUT    = lambda pid: f"{API_ROOT}/profiles/profiles/{pid}"      # update one
-PROFILE_GAMES  = lambda pid: f"{API_ROOT}/games/profile/{pid}"          # games for profile
+# profiles blueprint (no extra prefix now) -> /profiles [...]
+PROFILES_URL   = f"{API_ROOT}/profiles"                 # list all profiles
+PROFILE_PUT    = lambda pid: f"{API_ROOT}/profiles/{pid}"       # update one
+PROFILE_GAMES  = lambda pid: f"{API_ROOT}/profiles/{pid}/games" # games for profile
 
 # playerStats is mounted at /playerstats
 SUMMARY_URL    = lambda pid, gid: f"{API_ROOT}/playerstats/summary/{pid}/{gid}"
@@ -82,8 +82,35 @@ def fetch_profiles():
 
 @st.cache_data(ttl=20)
 def fetch_profile_games(pid: int):
-    r = requests.get(PROFILE_GAMES(pid), timeout=10); r.raise_for_status()
-    return norm_games(r.json())
+    candidates = [
+        f"{API_ROOT}/profiles/{pid}/games",   # new route
+        f"{API_ROOT}/games/profile/{pid}",    # legacy route (tuples)
+    ]
+    last_err = None
+    for url in candidates:
+        try:
+            r = requests.get(url, timeout=10); r.raise_for_status()
+            data = r.json() or []
+
+            # Normalize both shapes
+            if data and isinstance(data[0], dict):
+                # Detect the buggy payload: {'gameID':'gameID','name':'name'}
+                if data[0].get("gameID") == "gameID" and data[0].get("name") == "name":
+                    # try next candidate endpoint
+                    continue
+                return [{"ID": d.get("gameID"), "Name": d.get("name")} for d in data]
+            else:
+                # legacy tuples: (gameID, name)
+                return [{"ID": t[0], "Name": t[1]} for t in data]
+
+        except requests.RequestException as e:
+            last_err = e
+            continue
+
+    # If nothing worked, surface the last error
+    if last_err:
+        raise last_err
+    return []
 
 @st.cache_data(ttl=20)
 def fetch_summary(pid: int, gid: int):
@@ -317,17 +344,14 @@ if selected_profile and selected_game:
             try:
                 body = {
                     "username": selected_profile["Username"],
-                    # ensure these stay as their current values
                     "isAdmin": int(bool(selected_profile.get("Admin"))),
                     "isPublic": int(bool(selected_profile.get("Public"))),
-                    "isPremium": 1
+                    "isPremium": 1,
                 }
                 r = requests.put(PROFILE_PUT(pid), json=body, timeout=10)
                 if r.status_code == 200:
-                    # clear cache and refresh
                     fetch_profiles.clear()
                     st.success("Upgraded to Premium. Loading premium stats…")
-                    # update local state so sections render without waiting
                     selected_profile["Premium"] = 1
                     st.experimental_rerun()
                 else:
@@ -340,15 +364,14 @@ if selected_profile and selected_game:
         try:
             with st.spinner("Loading weapon stats..."):
                 weapons_raw = fetch_weapons(pid, gid)
-                # normalize
                 weapons = weapons_raw if isinstance(weapons_raw, list) else [weapons_raw]
                 if weapons and isinstance(weapons[0], dict):
-                    dfw = pd.DataFrame(weapons)
-                    # Rename if present
-                    dfw = dfw.rename(columns={"name": "Weapon", "weaponID": "ID"})
-                    sort_key = next((k for k in ("kills","totalUsageTime","accuracy","amountBought") if k in dfw.columns), None)
-                    if sort_key: dfw = dfw.sort_values(by=sort_key, ascending=False)
-                    if "ID" in dfw.columns: dfw = dfw.set_index("ID")
+                    dfw = pd.DataFrame(weapons).rename(columns={"name": "Weapon", "weaponID": "ID"})
+                    sort_key = next((k for k in ("kills", "totalUsageTime", "accuracy", "amountBought") if k in dfw.columns), None)
+                    if sort_key:
+                        dfw = dfw.sort_values(by=sort_key, ascending=False)
+                    if "ID" in dfw.columns:
+                        dfw = dfw.set_index("ID")
                 else:
                     dfw = pd.DataFrame(weapons)
         except requests.RequestException as e:
@@ -369,9 +392,11 @@ if selected_profile and selected_game:
                 maps_rows = maps_raw if isinstance(maps_raw, list) else [maps_raw]
                 if maps_rows and isinstance(maps_rows[0], dict):
                     dfm = pd.DataFrame(maps_rows).rename(columns={"name": "Map", "mapID": "ID"})
-                    sort_key = next((k for k in ("wins","kills","losses") if k in dfm.columns), None)
-                    if sort_key: dfm = dfm.sort_values(by=sort_key, ascending=False)
-                    if "ID" in dfm.columns: dfm = dfm.set_index("ID")
+                    sort_key = next((k for k in ("wins", "kills", "losses") if k in dfm.columns), None)
+                    if sort_key:
+                        dfm = dfm.sort_values(by=sort_key, ascending=False)
+                    if "ID" in dfm.columns:
+                        dfm = dfm.set_index("ID")
                 else:
                     dfm = pd.DataFrame(maps_rows)
         except requests.RequestException as e:
@@ -385,53 +410,52 @@ if selected_profile and selected_game:
             st.info("No map stats found.")
         st.divider()
 
-        # --- Match History (needs gameInstanceID) ---
-giid = find_game_instance_id(pid, gid, summary_payload)
-st.subheader("Match History")
-if not giid:
-    st.info("No game link found for match history.")
-else:
-    # Filters
-    fc1, fc2, fc3, fc4 = st.columns([1,1,1,1])
-    with fc1:
-        match_type = st.text_input("Match Type (optional)", value="")
-    with fc2:
-        rank = st.text_input("Rank (optional)", value="")
-    with fc3:
-        start = st.date_input("Start Date (optional)", value=None, format="YYYY-MM-DD")
-    with fc4:
-        end = st.date_input("End Date (optional)", value=None, format="YYYY-MM-DD")
-
-    start_s = start.strftime("%Y-%m-%d") if isinstance(start, date) else None
-    end_s   = end.strftime("%Y-%m-%d") if isinstance(end, date) else None
-
-    try:
-        with st.spinner("Loading matches..."):
-            matches_raw = fetch_matches(
-                pid, gid, giid,
-                match_type.strip() or None,
-                rank.strip() or None,
-                start_s, end_s
-            )
-
-        matches = matches_raw if isinstance(matches_raw, list) else [matches_raw]
-        if matches and isinstance(matches[0], dict):
-            dfmt = pd.DataFrame(matches)
-            desired = [c for c in ("matchID","matchDate","matchType","lobbyRank","mapName") if c in dfmt.columns]
-            others = [c for c in dfmt.columns if c not in desired]
-            dfmt = dfmt[desired + others] if desired else dfmt
-            if "matchID" in dfmt.columns:
-                dfmt = dfmt.set_index("matchID")
+        # --- Match History (ONLY for the currently selected game) ---
+        giid = find_game_instance_id(pid, gid, summary_payload)
+        st.subheader("Match History")
+        if not giid:
+            st.info("No game link found for match history.")
         else:
-            dfmt = pd.DataFrame(matches)
-    except requests.RequestException as e:
-        st.error(f"Failed to load matches: {e}")
-        dfmt = pd.DataFrame()
+            # Filters
+            fc1, fc2, fc3, fc4 = st.columns([1, 1, 1, 1])
+            with fc1:
+                match_type = st.text_input("Match Type (optional)", value="")
+            with fc2:
+                rank = st.text_input("Rank (optional)", value="")
+            with fc3:
+                start = st.date_input("Start Date (optional)", value=None, format="YYYY-MM-DD")
+            with fc4:
+                end = st.date_input("End Date (optional)", value=None, format="YYYY-MM-DD")
 
-    if not dfmt.empty:
-        st.table(dfmt)
-    else:
-        st.info("No matches found with those filters.")
+            start_s = start.strftime("%Y-%m-%d") if isinstance(start, date) else None
+            end_s = end.strftime("%Y-%m-%d") if isinstance(end, date) else None
+
+            try:
+                with st.spinner("Loading matches..."):
+                    matches_raw = fetch_matches(
+                        pid, gid, giid,
+                        match_type.strip() or None,
+                        rank.strip() or None,
+                        start_s, end_s
+                    )
+                matches = matches_raw if isinstance(matches_raw, list) else [matches_raw]
+                if matches and isinstance(matches[0], dict):
+                    dfmt = pd.DataFrame(matches)
+                    desired = [c for c in ("matchID", "matchDate", "matchType", "lobbyRank", "mapName") if c in dfmt.columns]
+                    others = [c for c in dfmt.columns if c not in desired]
+                    dfmt = dfmt[desired + others] if desired else dfmt
+                    if "matchID" in dfmt.columns:
+                        dfmt = dfmt.set_index("matchID")
+                else:
+                    dfmt = pd.DataFrame(matches)
+            except requests.RequestException as e:
+                st.error(f"Failed to load matches: {e}")
+                dfmt = pd.DataFrame()
+
+            if not dfmt.empty:
+                st.table(dfmt)
+            else:
+                st.info("No matches found with those filters.")
 
 # ---------- Back ----------
 st.divider()
