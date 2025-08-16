@@ -173,8 +173,8 @@ INSERT INTO matchStats (matchID, gameInstanceID, kills, deaths, assists,
 INSERT IGNORE INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
 ('KaiGhost', FALSE, TRUE, TRUE, 'pass123');
 
-INSERT IGNORE INTO gamesProfiles (gameID, profileID, gameUsername, showOnDashboard) VALUES
-(1, 9, 'KaiGhost', TRUE);
+INSERT IGNORE INTO gamesProfiles (gameInstanceID, gameID, profileID, gameUsername, showOnDashboard) VALUES
+(9,1, 9, 'KaiGhost', TRUE);
 
 INSERT IGNORE INTO map (gameID, POIs, Name) VALUES
 (1, 'A Site, B Site,Mid', 'Ascent');
@@ -182,13 +182,23 @@ INSERT IGNORE INTO map (gameID, POIs, Name) VALUES
 INSERT IGNORE INTO weapons (gameID, weaponType, name) VALUES
 (1, 'Rifle',  'Vandal');
 
-INSERT IGNORE INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
+INSERT IGNORE INTO matches (matchID, gameID, mapID, matchDate, matchType, lobbyRank)
 VALUES
-(1, 1, '2025-08-01 18:30:00','Ranked', 'Immortal');
+(5, 1, 1, '2025-08-01 18:30:00','Ranked', 'Immortal'),
+(50001, 1, 2, '2025-08-15 20:15:00', 'Ranked', 'Immortal'),
+(50002, 1, 4, '2025-08-15 19:30:00', 'Casual', 'Immortal'),
+(50003, 1, 2, '2025-08-15 18:45:00', 'Ranked', 'Immortal'),
+(50004, 1, 3, '2025-08-15 17:55:00', 'Unrated', 'Immortal'),
+(50005, 1, 3, '2025-08-15 16:20:00', 'Ranked', 'Immortal');
 
 INSERT IGNORE INTO matchStats (matchID, gameInstanceID, kills, deaths, assists, Headshots, TotalShots,shotsHit, matchDuration, rounds, win, damageDealt,firstBloods)
 VALUES
-(5, 8, 22, 15, 5, 12, 300, 129, 2100, 16, 1, 10370, 2); 
+(5, 9, 22, 15, 5, 12, 300, 129, 2100, 16, 1, 10370, 2),
+(50001, 9, 28, 12, 5, 18, 160, 80, 2500, 22, 1, 3800, 3),
+(50002, 9, 19, 16, 8, 9, 140, 70, 2600, 25, 0, 2900, 1),
+(50003, 9, 32, 8, 2, 22, 190, 110, 2200, 18, 1, 4200, 5),
+(50004, 9, 25, 10, 3, 15, 180, 90, 2100, 19, 1, 3500, 4),
+(50005, 9, 17, 14, 6, 7, 155, 75, 2700, 26, 1, 2600, 2);
 
 INSERT INTO playerStats
 (gameInstanceID, kills, deaths, assists, totalDamage, totalHeadshots, totalShotsHit, totalWins)
