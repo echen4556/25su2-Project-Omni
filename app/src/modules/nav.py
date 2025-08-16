@@ -29,7 +29,7 @@ def MilestonesAndGoalsNav():
 
 def EmmaSmithNav():
     st.sidebar.page_link(
-        "03_Emma_Smith_home", label="Home", icon="👤"
+        "pages/03_Emma_Smith_home.py", label="Home", icon="👤"
     )
 
 
