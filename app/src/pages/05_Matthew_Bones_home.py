@@ -62,8 +62,11 @@ else:
 
 
 st.divider()
+st.subheader("Tools & Features")
 
 if st.button('🤝 Compare Players',
-             type='primary',
              use_container_width=True):
     st.switch_page('pages/32_Select_Players.py')
+
+if st.button(f"📜 View Match History",  use_container_width=True):
+                st.switch_page("pages/match_history.py")
