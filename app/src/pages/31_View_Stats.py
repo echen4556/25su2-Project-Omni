@@ -25,7 +25,6 @@ if 'profileID' not in st.session_state or \
 
 # Get premium status from session
 is_premium = st.session_state.get('isPremium')
-st.write(is_premium)
 
 # Get all required info from the session state
 profile_id = st.session_state['profileID']
@@ -50,36 +49,6 @@ def get_summary_stats(profile_id, game_id):
         return response.json()
     except requests.exceptions.RequestException as e:
         return None # Return None if stats don't exist (404) or other error
-
-@st.cache_data
-def get_all_weapon_stats(profile_id, game_id):
-    """Fetches all weapon stats for a player in a game."""
-    try:
-        # MOCKING API CALL FOR DEMONSTRATION
-        weapon_stats = [
-            {'statTableID': 1, 'weaponID': 101, 'name': 'Vandal', 'totalUsageTime': 12.5, 'kills': 150, 'accuracy': 0.25, 'amountBought': 200},
-            {'statTableID': 1, 'weaponID': 102, 'name': 'Phantom', 'totalUsageTime': 8.2, 'kills': 95, 'accuracy': 0.35, 'amountBought': 150},
-            {'statTableID': 1, 'weaponID': 103, 'name': 'Operator', 'totalUsageTime': 5.1, 'kills': 60, 'accuracy': 0.75, 'amountBought': 50},
-        ]
-        return pd.DataFrame(weapon_stats)
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching weapon stats: {e}")
-        return pd.DataFrame()
-
-@st.cache_data
-def get_all_map_stats(profile_id, game_id):
-    """Fetches all map stats for a player in a game."""
-    try:
-        # MOCKING API CALL FOR DEMONSTRATION
-        map_stats = [
-            {'statTableID': 1, 'mapID': 201, 'name': 'Ascent', 'kills': 200, 'wins': 50, 'losses': 30},
-            {'statTableID': 1, 'mapID': 202, 'name': 'Bind', 'kills': 150, 'wins': 40, 'losses': 45},
-            {'statTableID': 1, 'mapID': 203, 'name': 'Haven', 'kills': 100, 'wins': 30, 'losses': 20},
-        ]
-        return pd.DataFrame(map_stats)
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching map stats: {e}")
-        return pd.DataFrame()
 
 @st.cache_data
 def get_all_weapon_stats(profile_id, game_id):
