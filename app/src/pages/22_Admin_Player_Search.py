@@ -20,7 +20,7 @@ st.write("Options")
 # ---------- API location ----------
 API_ROOT = os.getenv("API_ROOT", "http://web-api:4000").rstrip("/")
 
-PROFILES_BASE = f"{API_ROOT}/profiles"
+PROFILES_BASE = f"{API_ROOT}"
 PROFILES_URL  = f"{PROFILES_BASE}/profiles"                      # list of profiles
 PROFILE_URL   = lambda pid: f"{PROFILES_BASE}/profiles/{pid}"    # single profile (unused)
 
