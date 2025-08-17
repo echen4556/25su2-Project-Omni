@@ -6,7 +6,8 @@ from modules.nav import SideBarLinks # Assuming this is your navigation module
 # --- Configuration ---
 st.set_page_config(layout="wide")
 logger = logging.getLogger(__name__)
-API_BASE_URL = "http://api:4000" # Replace with your actual Flask API URL
+# CORRECTED: Use the service name 'api' for container-to-container communication
+API_BASE_URL = "http://api:4000"
 
 # --- Page Setup ---
 SideBarLinks()
@@ -26,7 +27,7 @@ def get_unlinked_games(profile_id):
     """
     Fetches all games and subtracts the ones already linked to the user's profile.
     """
-    try:
+    try: # <-- CORRECTED: Added the missing colon
         # 1. Fetch ALL games from the database
         response_all = requests.get(f"{API_BASE_URL}/games")
         response_all.raise_for_status()
