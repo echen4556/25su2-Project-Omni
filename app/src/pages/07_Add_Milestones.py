@@ -35,9 +35,9 @@ if st.button("Save Milestone", type="primary"):
         r = requests.post(f"{API_BASE_URL}/milestones", json=payload)
         r.raise_for_status()
         st.success(f"Milestone '{title}' saved successfully!")
-        st.switch_page("06_View_Milestones.py")
+        st.switch_page("pages/06_View_Milestones.py")
     except requests.exceptions.RequestException as e:
         st.error(f"Error saving milestone: {e}")
 
 if st.button("⬅ Cancel"):
-    st.switch_page("06_View_Milestones.py")
+    st.switch_page("pages/06_View_Milestones.py")
