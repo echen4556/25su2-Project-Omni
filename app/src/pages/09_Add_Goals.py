@@ -31,7 +31,7 @@ if st.button("Save Goal", type="primary"):
     payload = {
         "description": title,   # previously "name"
         "gameID": 2,            # choose a valid gameID
-        "profileID": 1,          # must match a valid profileID in your database
+        "profileID": 9,          # must match a valid profileID in your database
         "date": datetime.now().isoformat() 
     }
     try:
