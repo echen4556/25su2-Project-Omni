@@ -130,6 +130,12 @@ VALUES
 (1, 'A Site, B Site, Hookah', 'Bind'),
 (1, 'A Site, B Site, C Site', 'Haven');
 
+INSERT IGNORE INTO mapStats
+(statTableID, mapID, kills, wins, losses)
+VALUES
+(2, 1, 30,  3, 2),
+(2, 2, 10, 1, 3);
+
 -- MATCHES
 INSERT INTO matches (gameID, mapID, matchDate, matchType, lobbyRank)
 VALUES
@@ -208,14 +214,14 @@ VALUES
 INSERT IGNORE INTO weaponStats
 (statTableID, weaponID, totalUsageTime, kills, accuracy, amountBought)
 VALUES
-(1, 1, 4.000, 180, 0.520, 150),
-(2, 2, 2.000,  78, 0.470,  46);
+(9, 1, 4.000, 180, 0.520, 150),
+(9, 2, 2.000,  78, 0.470,  46);
 
 INSERT IGNORE INTO mapStats
 (statTableID, mapID, kills, wins, losses)
 VALUES
-(1, 1, 30,  3, 2),
-(1, 2, 10, 1, 3);
+(9, 1, 30,  3, 2),
+(9, 2, 10, 1, 3);
 
 INSERT IGNORE INTO goals
 (gameID, dateCreated, dateAchieved, description)
@@ -317,7 +323,7 @@ INSERT INTO matchStats (matchStatsID, matchID, gameInstanceID, kills, deaths, as
   (9201, 5201, 1002, 30, 20, 18, 0, 500, 250, 1800, 1, 1, 6400, 0);
 
 
-INSERT INTO profiles (profileID, username, isAdmin, isPublic, isPremium, password) VALUES
+INSERT INTO profiles (username, isAdmin, isPublic, isPremium, password) VALUES
 ('AlexTurner', FALSE, TRUE, TRUE, 'pass123'),
 ('MiaCruz', FALSE, TRUE, FALSE, 'pass123'),
 ('TheNightFury', TRUE, TRUE, TRUE, 'pass123'),
