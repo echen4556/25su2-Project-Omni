@@ -106,11 +106,6 @@ def SideBarLinks(show_home=False):
             EmmaSmithMatchHistoryNav()
             MilestonesAndGoalsNav()
 
-        
-        if st.session_state["role"] == "pro_gamer":
-            KaiNguyenNav()
-            MilestonesAndGoalsNav()
-
         if st.session_state["role"] == "pro_gamer":
             KaiNguyenNav()
             MilestonesAndGoalsNav()
